@@ -1,0 +1,50 @@
+\RequirePackage[l2tabu,orthodox]{nag}
+
+\documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
+
+\input{settings/packages}
+\input{settings/settings}
+\input{settings/commands}
+
+% TODO: remove if glossary not needed
+\input{glossary/terms}
+\input{glossary/acronyms}
+
+\begin{document}
+
+\input{pages/cover}
+
+\frontmatter{}
+
+\input{pages/title}
+\input{pages/disclaimer}
+\input{pages/acknowledgements}
+\input{pages/abstract}
+\microtypesetup{protrusion=false}
+\tableofcontents{}
+\microtypesetup{protrusion=true}
+
+\mainmatter{}
+
+\nocite{*}
+
+\input{chapters/01_introduction}
+\input{chapters/02_approaches}
+\input{chapters/03_implementation}
+\input{chapters/04_evaluation_and_interpretation}
+\input{chapters/05_prospects}
+% TODO: add more chapters here
+
+\appendix{}
+
+ % TODO: remove if glossary not needed
+\glsaddall{} % add all defined terms to glossary, even if not referenced in text
+\printglossaries{}
+
+\microtypesetup{protrusion=false}
+\listoffigures{}
+\listoftables{}
+\microtypesetup{protrusion=true}
+\printbibliography{}
+
+\end{document}

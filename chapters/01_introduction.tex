@@ -35,8 +35,7 @@ Smart devices are electronic devices, that feature wireless communication, e.g.\
     \caption{Examples for smart mobile devices that are worn in close proximity of the user (from left to right): A OnePlus One smartphone, a Sony SmartWatch 3, Smarty Ring concept design}
     \label{fig:smartdevices}
 \end{figure}
-Common examples for smart mobile devices are smartphones and smartwatches.
-TODO: Füllbild beschreiben
+Currently common examples for smart mobile devices are smartphones. With the release of the Apple Watch last year in 2015, smartwatches increasingly became popular. With the increasing miniaturization of smart mobile devices, a consequent next step would be even smaller devices, like smart-rings. In Figure~\ref{fig:smartdevices} a size comparison between the three mentioned categories is shown.
 
 \subsection{Smartphones}
 Smartphones are the most capable of the smart mobile devices discussed herein. Smartphones usually have numerous wireless communication possibilities and thus function are a personal data-hub, to which other personal devices connect and communicate over. Typical connections for Smartphones are: Cellular network (e.g.\ \acrshort{gsm}, \acrshort{umts}), WiFi, Bluetooth, Near Field Communication etc. Smartphones are also packed with sensors, which can be utilized by programmers of \Glspl{app} and typically include acceleration as well as gyroscopic sensors for movement detection.
@@ -53,9 +52,6 @@ The three major operating systems on smartphones are Android, iOS and Windows. A
 \subsection{Smartwatches}
 Smartwatches, as displayed in the middle of Figure~\ref{fig:smartdevices}, are a much newer iteration of wearable smart mobile devices. Early designs for smartwatches came up in the 1980's and first prototypes were released in the 1990's. However, modern smartwatches feature network connectivity and are usually paired via Bluetooth with smartphones.
 
-The currently biggest market share with over 50\% in smartwatches has Apple, with its Apple Watch, running watchOS. Android Wear, an adapted version of the Android operating system for smartwatches, has the second highest market share. All in all, the smartwatch market is more diverse than the smartphone market, with several independently developed operating systems like Pebble OS or Samsumng's Tizen.
-Smartwatches, bild mitte, beginn von Android Wear, adaption smartphone/smartwatch -> alles android
-
 \begin{figure}
     \centering
     \includestandalone[width=0.8\textwidth]{figures/wristwearosmarketshare}
@@ -63,27 +59,43 @@ Smartwatches, bild mitte, beginn von Android Wear, adaption smartphone/smartwatc
     \label{fig:my_label}
 \end{figure}
 
-TODO: Operating systems: more differenciated. Android, WatchOS, Tizen, PebbleOS Market share from \cite{idc2015wristmarketshare}
+The currently biggest market share with over 50\% in smartwatches has Apple, with its Apple Watch, running watchOS. Android Wear, an adapted version of the Android operating system for smartwatches, has the second highest market share. All in all, the smartwatch market is more diverse than the smartphone market, with several independently developed operating systems like Pebble OS or Samsumng's Tizen. However, Android Wear has the advantage of having the same programming interfaces as Android. 
+
+With developing \glspl{app} for Android in combination with small adaptions to Android Wear, developers can target a huge percentage of smartphones and also can develop smartwatch apps with virtually no overhead.
 
 \subsection{Smart-rings}
-Future music, no real sensors, maybe special developement necessary to identify users with accelerometers?
+Smart-rings are the next step towards even smaller wearables. The basic concept of these rings is to provide ``smart'' basic functionality a smartwatch can provide, without the need to wear a watch. For example displaying notifications or providing authentication for payment processes can also be done solely on a smart ring.
+
+However, there are no real commercially available smart-ring products yet, but just design concepts and prototypes. Specially developed smart-rings with acceleration sensors should be able to identify users based on their motion patterns. Future work might provide basic functionality on smart-rings, but definitely needs adaption to the special purpose operating systems. 
 
 \section{Pattern recognition}
 TODO: hier schaubild einfügen
+\cite{bishop2006pattern}
 \subsection{Preprocessing}
+Practical applications -> preprocessing -> transform the data, so the problem will be easier to solve
+
+Generally, scaled to a fixed size (e.g. digits to recognize) to have similar shape and location
+
+result: predictable and uniform input
+
+preprocessing -> operating on the raw acceleration sensors
 \subsection{Feature extraction}
-Dynamic time warping
+we make a distinction preprocessing vs. feature extraction -> FE extracts the relevant data for our specific use-case.
+
+makes it much easier for a subsequent pattern recognition algorithm to distinguish between the different classes
+
+no need to compare the whole input data set, but only the ``features'' -> computationally faster and smaller to store for authentication (dimensionality reduction)
+
+comparable data needs to undergo the same preprocessing and feature extracting steps
+handle with care: information is discarded, accuracy can decrease
+
 \subsection{Classification}
-Support Vector Machine
-TODO Schaubild für SVM
+(Seite 21, Bishop)
+Training / learning phase
 
-k-Nearest Neighbor
-TODO Schaubild für KNN
+supervised vs. unsupervised
 
-Bayes classifier
+Once trained, can be used to determine the identity / class of a new value (test set) with generalization
 
-Neuronal networks
-
-Machine learning with encog
-
-Tensorflow
+final goal for this paper: clustering of similar datasets and identify the previously learned users.
+Enhancement?: automatically cluster input data and identify, how many users are using the system

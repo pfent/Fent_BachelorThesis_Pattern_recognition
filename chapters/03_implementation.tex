@@ -14,9 +14,7 @@ Local processing of the acceleration data also reduces the size of the data tran
 
 There are also approaches to privacy protecting biometric authentication by locally generating cryptographic bio-keys\cite{bhargav2006privacy, verbitskiy2003reliable, ross2011visual}. Since handling personal identification information requires special precautions to not loose the data, these bio-keys can be used to implement so called ``zero-knowledge proof of knowledge'' protocols. This is especially useful, since only the information needed to verify the proof of knowledge needs to be stored on the server. If an attacker acquires this information, he can only verify the identity of the user and is not able to extract personal data about the user, thus preserving the users privacy.
 
-A client-side data processing can also be used to authenticate the user locally, e.g.\ when entering the phones unlock code. This can be used for intrusion detection or for locking stolen devices.
-
-However, server side authentication is easier to deploy, since changes in the authentication algorithms only need to be made in a single place. Authentication spoofing also is harder, since an attacker can analyze locally installed apps, but does not have access to the server application.
+A client-side data processing can also be used to authenticate the user locally, e.g.\ when entering the phones unlock code. This can be used for intrusion detection or for locking stolen devices. However, server side authentication is easier to deploy, since changes in the authentication algorithms only need to be made in a single place. Authentication spoofing also is harder, since an attacker can analyze locally installed apps, but does not have access to the server application.
 
 For this paper, we implemented a client-side authentication mechanism. In our opinion, the privacy of a user is very important and personal data should not be transmitted over the network, when it can be avoided.
 
@@ -109,7 +107,7 @@ which classifies the features of detected keystrokes on Android Wear devices. In
 
 \subsection{Classification and machine learning}
 To allow an identification of users according to the entered data, we need a way to compare and classify the features mentioned above. 
-As comparison algorithms, we can use an euclidean distance, that can compare two equal sized \lstinline$FeatureVectors$ by taking the square root of the distance of the individual features, as shown in in Equation~\ref{eq:euclidiandistance}.
+As comparison algorithms, we can use an euclidean distance in $n$ dimensions. With this distance, we can compare two equal sized \lstinline$FeatureVectors$ by taking the square root of the distance of the individual features, squared. This formula is shown in Equation~\ref{eq:euclidiandistance}.
 \begin{equation}\label{eq:euclidiandistance}
 d(a, b) = \sqrt{(a_1 - b_1)^2 + \ldots + (a_n - b_n)^2}
 \end{equation}

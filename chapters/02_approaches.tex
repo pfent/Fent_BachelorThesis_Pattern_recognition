@@ -80,7 +80,7 @@ Figure~\ref{fig:taprecognition} compares actual pressed keys and detected taps o
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{figures/lucifero_lolcat_by_fraterorion-d4q5ol0.jpg}
+    \includegraphics[width=0.8\linewidth]{figures/lucifero_lolcat_by_fraterorion-d4q5ol0.jpg}
     \caption{TODO Detected peaks and corresponding taps on the screen}
     \label{fig:taprecognition}
 \end{figure}
@@ -95,14 +95,14 @@ For recognition of key presses with smartwatches, we examined a scenario of a us
     \label{fig:watchcoordinate}
 \end{figure}
 
-Wang et al.\cite{wang2015mole}\ discussed in their paper of MotionLeaks for MobiCom'15, that the key press timings on keyboards can be extracted by the Z-axis movement of the watch. When the user presses a key on the keyboard, the user's finger dips and the wrist also undergoes a partial dipping motion. This motion can be detected by the Z-axis acceleration, in combination with a peak detection algorithm, similar to the one used with phones in Section~\ref{subsection:phones}.
+Wang et al.\cite{wang2015mole}\ discussed in their paper on MotionLeaks for MobiCom'15, that the key press timings on keyboards can be extracted by the Z-axis movement of the watch. When the user presses a key on the keyboard, the user's finger dips and the wrist also undergoes a partial dipping motion. This motion can be detected by the Z-axis acceleration, in combination with a peak detection algorithm, similar to the one used with phones in Section~\ref{subsection:phones}.
 
 Wang et al.\ also improoved their peak detection algorithm by chaining a peak detection tool with a bagged decision classifier. Since their goal was to guess individual typed keys instead of analysing the pattern as whole, the additional computational overhead might be worthwhile. This however, does not hold for our approach of matching the whole  input pattern, thus we use a simple peak detection algorithm.
 
 Additionally to keystroke pattern recognition the overall movement of the watch while typing can be used as an additional authentication vector. Different users might move their hands differently for text input. However we are not aware of scientific studies measuring the effectiveness of this approach.
 
 \section{Gait recognition}
-Gait is defined as ``the way in which a person (…) walks'' in the Cambridge Dictionary. Various scientific papers analyzed the specifics of human gait\cite{johansson1975visual, lee2002gait, johnstonsmartwatch} and concluded, that individual gait can be used as a biometrical recognition mechanism. The steps a user walks throughout the day can for example be used to generate user profiles and extract an identifying pattern. 
+Gait is defined as ``the way in which a person (\ldots) walks'' in the Cambridge Dictionary. Various scientific papers analyzed the specifics of human gait\cite{johansson1975visual, lee2002gait, johnstonsmartwatch} and concluded, that individual gait can be used as a biometrical recognition mechanism. The steps a user walks throughout the day can for example be used to generate user profiles and extract an identifying pattern. 
 
 As early as 1975, Johansson\cite{johansson1975visual} had shown, that observers could identify individuals just by watching videos of lights mounted to joints of otherwise invisible walking people. Additionally, the observers were able to not only identify previously known people, but also identify the gender of unknown persons. However human gait is influenced by many more personal aspects, as the individual weight, leg length, posture and speed of walking. Thus gait patterns are highly individual and are usually unique.
 \subsection{Related work}

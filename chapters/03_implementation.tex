@@ -85,31 +85,61 @@ TODO: normal signal vs. moving average vs. exponential figure.
 
 Since the rate of sensor measurements can vary with the processor load, we also could interpolate the measurements to a continuous function or simply a fixed rate. A technique to implement this would for example be cubic spline interpolation. However our sensor measurements are fairly regular and sufficient for a proof-of-concept, with a standard variance in measurements $< 0.01ms$. In real world applications with varying loads and background activity during sensor measurements, this might be needed.
 
-Since there might be multiple preprocessing steps needed, we also implemented a simple \lstinline$ComposingPreprocessor$, which can combine multiple preprocessing steps to a single one. We then simply apply the other preprocessors sequentially as specified. Thus we can for example first noremalize the data to a mean of 0 and then smooth it with one of the implemented smoothing functions.
+Since there might be multiple preprocessing steps needed, we also implemented a simple \lstinline$ComposingPreprocessor$, which can combine multiple preprocessing steps to a single one. We then simply apply the other preprocessors sequentially as specified. Thus we can for example first normalize the data to a mean of 0 and then smooth it with one of the implemented smoothing functions.
 
 \subsection{Feature extraction from SensorData}\label{subsection:featureextraction}
+After the data is comparable, we can proceed to extract certain features, we want to compare. We do this, by measuring certain features of the data and storing those features in so called \lstinline$FeatureVectors$. Those \lstinline$FeatureVectors$ have the advantage of being more condensed and smaller in file size than the raw data.
 
-Transformation into FeatureVectors
-PeakDetector
+For our approach of detecting keystrokes, we first utilize a peak detection algorithm to locate the individual keystrokes as outlined in Section~\ref{subsection:keystrokerecognition}. For this, we are using the peak detection algorithm proposed by Palshikar, which has been implemented by Tinevez for the Fiji image processing library\cite{palshikar2009simple, tinevez2011peak}. For best results, we used a window size of 67 measurements to detect keystrokes. The window size is based on the average keystroke frequency, which we measured to about $\SI{3}{Hz}$. We then can calculate an appropriate size of the window to detect, as shown in Equation~\ref{eq:windowsize}.
 
-PhoneKeystrokeFeatureExtractor -> Tap intensity and dwell time
-Parameters for peak detection
+\begin{equation}\label{eq:windowsize}\begin{split}
+\textrm{windowsize} * \textrm{sampling frequency} & = \textrm{keystroke frequency}\\
+x * \SI{200}{Hz} & = \SI{3}{Hz}\\
+x & = \frac{\SI{200}{Hz}}{\SI{3}{Hz}}\\
+x & = 66 \frac{2}{3} = 66,\overline{6} \approx \uuline{\underline{67}}
+\end{split}\end{equation}
 
-WearKeystrokeFeatureExtractor -> Tap intensity, dwell time and wear movement
+Based on this algorithm, we implemented two distinct feature extraction mechanisms:
+
+A \lstinline$PhoneKeystrokeFeatureExtractor$,\\
+which classifies the features of detected keystrokes on conventional Android devices, such as phones or tablets. As a proof of concept, we are extracting the tap intensity and the individual interval of the keystrokes.
+    
+A \lstinline$WearKeystrokeFeatureExtractor$,\\
+which classifies the features of detected keystrokes on Android Wear devices. In this approach, we are recording the lateral movement additionally to the tap intensity and the interval.
 
 \subsection{Classification and machine learning}
+To allow an identification of users according to the entered data, we need a way to compare and classify the features mentioned above. 
+As comparison algorithms, we can use an euclidean distance, that can compare two equal sized \lstinline$FeatureVectors$ by taking the square root of the distance of the individual features, as shown in in Equation~\ref{eq:euclidiandistance}.
+\begin{equation}\label{eq:euclidiandistance}
+d(a, b) = \sqrt{(a_1 - b_1)^2 + \ldots + (a_n - b_n)^2}
+\end{equation}
 
-distance between feature vectors via DTW classification
-clustering and classification with kNN Classifier, implement Encog?
+Since our feature vectors are not necessarily equal in size, we decided to use a \gls{dtw} distance measurement, as several other papers conclude, that \gls{dtw} distances give significantly better results in comparing time series data\cite{ding2008querying}. This allows our algorithm to be resilient to erroneously detected keystrokes. To emphasize the idea, the difference in the two comparisons is displayed in Figure~\ref{fig:euclideandtw}. in this figure, we are comparing two very similar time series, but the euclidean distance is rather large, since the lower signal is shifted to the left and slightly stretched.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{figures/EuclideanvsDTW.png}
+    \caption{Comparison between a euclidean distance and a \gls{dtw} distance\cite{keogh2005exact}}
+    \label{fig:euclideandtw}
+\end{figure}
+
+The standard \gls{dtw} algorithm uses dynamic programming, which fills a matrix of distance measurements and optimized the path through it. There are also other implementations like SparseDTW or FastDTW available that require significantly less computation time. We decided to stay with a simple approach, since we already condensed the feature vectors and the naive implementations is fast enough.
+
+TODO: glossary
+To classify the feature vectors, we implemented a k-NN algorithm according to Dudani's paper on this behalf\cite{dudani1976distance}. With this algorithm, we can compare a new feature vector to all other vectors and record the distance to those vectors. We can then decide according to the nearest neighbors, according to the distance measurement defined above, to which category (i.e.\ user) the new feature vector belongs. To do this, we look at the $k$ vectors with the smallest distance to the new vector and count, which category is present most often.
+
+TODO: knn clustering bild?
+
+Another approach would be to define and train neuronal networks to classify the available data. One open source framework for neuronal networks is Encog\cite{heaton2016encog}. Due to the complexity and time requirement, this approach exceeds the scope of this Bachelor's thesis, but definitely is a promising future approach, which needs to be evaluated.
 
 \section{Data storage and processing}
-Persistent storage is important -> machine learning
-Replay of previously recorded data to compare approches
+Since with recording acceleration data, we are generating many individual data sets, that need to be stored for later analysis. The lifetime of Android apps is mostly controlled by the user. Therefore, we need a way to safely and persistently store the recorded data. With this data, we can also compare different approaches in preprocessing and classification without the need to constantly interact with the device.
 
 \subsection{SQLite Database}
-SQLite lightweight database. standard android. no need for extra features
+To store the data on the device, we use a SQLite database. This is the standard Android database for persistent storage on the device. SQLite is an extremely lightweight database with little to no additional features. Since we do not need extra database features except inserting and querying the data, SQLite is a good fit for our use case.
 
-.db file can be easily shared among devices -> data visualization via python
+SQLite also stores the database in a single standardized file with a user-defined name, in our case \lstinline$SensorMeasurements.db$. This allows to share the data between devices for debugging and data visualization. In our example prototype, the database is regularly copied to a folder accessible with USB, since the usual storage of the database is inaccessible for other processes running on the device. We then can access the database copy from a connected PC, where we can visualize the algorithms directly on the data with a simple Python script.
+
+The schema of the database is displayed in Figure~\ref{fig:dbschema}. With this schema, we are  storing the raw recorded data in so called ``datasets''. $N$ of the data points in a dataset form a whole measurement, which is linked to a single user. We also record the keystrokes in each of the measurements, when the user is using the on-screen keyboard. We then can correlate the ``sensortime'' we measured the individual acceleration in the dataset with the ``keystroketime'' to compare, if we correctly detected a keystroke. We also deduced the average keystroke and sensor-measurement frequency used in the parameters for the algorithms mentioned in the last sections.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/databaseschema.png}
@@ -118,29 +148,37 @@ SQLite lightweight database. standard android. no need for extra features
 \end{figure}
 
 \subsection{Background verification of patterns}
-Planned enhancement for unobstructed user experience. Not implemented yet
+Since the measurement data is persistently stored, we can also implement a background verification and identification of the users. These background identity checks would allow for the benefits of the additional stronger authentication, without bothering or interrupting the user.
 
+Currently, this is only a plan for future improvements, as of now, we only directly check the measured data. However this can easily be implemented with additional work.
 \section{App prototypes}
-App prototypes on Github. Android Studio project, 3 different modules to share code between Phone and Wear project
+The individual app prototypes and source code are available online via GitHub (\url{https://github.com/pfent/GesturesID}) or via the attached CD. The structure of the files is as follows: In the ``Android'' folder, there is an Android Studio project called ``GesturesID'', which contains the source code of the prototypes. In the same folder, there are also two \lstinline$.apk$ files, which can be installed on an Android, respectively an Android Wear device. This project can be built via the Android Studio IDE or via the Gradle wrapper script \lstinline$gradlew$.
 
-Sensorprocessing: Implementation of the sensor recording, preprocessing, analyzing and classification
-
-App: Phone / Standard Android module, Activities for Text input / user information what this app does
-
-Right now: only proof of concept, due to limited time. No real authentication of users. demonstrating 
+The source code itself is structured in 3 different modules: \lstinline$app$: the Android specific source code; \lstinline$wear$: the Android wear specific code and \lstinline$sensorprocessing$: the code that can be used in both apps.
 
 TODO: figure of module structure
+
+Sensorprocessing: Implementation of the sensor recording, preprocessing, analyzing and classification
+loosely coupled packages
+additionally: measurementmanager for SQL, Listener interface used for callbacks when a pattern has been entered.
 
 \subsection{Android application}
 TODO: application screenshots
 
-onFocusChangeListener to define start and end of text input
+App: Phone / Standard Android module, Activities for Text input / user information what this app does
+application / start menu launcher for training
+another one for authentication
+
+\lstinline$PatternFocusChangeListener$ to define start and end of text input
 
 combined authenticator: accelerometer, normalizer, smoothing, PhoneKeystrokeFeatureExtractor, kNN Classifier with DTW distance
 
 \subsection{Android Wear application}
 TODO: wear screenshots
 
-
+only start / stop of pattern recording
+implementation should be similar to Android, 
 
 \subsection{Limitations}
+
+Right now: only proof of concept, due to limited time. No real authentication of users. demonstrating 

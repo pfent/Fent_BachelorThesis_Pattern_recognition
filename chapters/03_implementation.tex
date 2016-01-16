@@ -96,7 +96,7 @@ For our approach of detecting keystrokes, we first utilize a peak detection algo
 \textrm{windowsize} * \textrm{sampling frequency} & = \textrm{keystroke frequency}\\
 x * \SI{200}{Hz} & = \SI{3}{Hz}\\
 x & = \frac{\SI{200}{Hz}}{\SI{3}{Hz}}\\
-x & = 66 \frac{2}{3} = 66,\overline{6} \approx \uuline{\underline{67}}
+x & = 66 \frac{2}{3} = 66,\overline{6} \approx \underline{\underline{67}}
 \end{split}\end{equation}
 
 Based on this algorithm, we implemented two distinct feature extraction mechanisms:
@@ -117,6 +117,7 @@ d(a, b) = \sqrt{(a_1 - b_1)^2 + \ldots + (a_n - b_n)^2}
 Since our feature vectors are not necessarily equal in size, we decided to use a \gls{dtw} distance measurement, as several other papers conclude, that \gls{dtw} distances give significantly better results in comparing time series data\cite{ding2008querying}. This allows our algorithm to be resilient to erroneously detected keystrokes. To emphasize the idea, the difference in the two comparisons is displayed in Figure~\ref{fig:euclideandtw}. in this figure, we are comparing two very similar time series, but the euclidean distance is rather large, since the lower signal is shifted to the left and slightly stretched.
 
 \begin{figure}
+    \centering
     \includegraphics[width=\textwidth]{figures/EuclideanvsDTW.png}
     \caption{Comparison between a euclidean distance and a \gls{dtw} distance\cite{keogh2005exact}}
     \label{fig:euclideandtw}

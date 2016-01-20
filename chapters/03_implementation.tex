@@ -10,11 +10,11 @@ One of the first tasks when designing applications, is to analyze the target pla
 
 We could process all the data locally on the device, since we already need an Android App to record the accelerometer data. When we do the data processing client-side, we can keep the server application as small as possible. Since typical Android devices have multi-core processors, they also should be computationally powerful enough to process the data. In our test scope, all sensor processing work was handled fast enough to not create any user noticeable wait times. Moreover, decentralized data processing on the individual devices also has significant advantages in reducing server load, which allows the authentication approach to easily scale to a big number of users.
 
-Local processing of the acceleration data also reduces the size of the data transmitted to the server. The raw data can easily reach several megabytes, which is especially troublesome for mobile devices. When the networking connectivity of mobile devices can be slow, e.g.\ in cellular networks, raw data transmission can take several seconds.
+Local processing of the acceleration data also reduces the size of the data transmitted to the server. The raw data can easily reach several megabytes, which is especially troublesome for mobile devices. When the networking connectivity of mobile devices can be slow, \eg in cellular networks, raw data transmission can take several seconds.
 
 There are also approaches to privacy protecting biometric authentication by locally generating cryptographic bio-keys\cite{bhargav2006privacy, verbitskiy2003reliable, ross2011visual}. Since handling personal identification information requires special precautions to not loose the data, these bio-keys can be used to implement so called ``zero-knowledge proof of knowledge'' protocols. This is especially useful, since only the information needed to verify the proof of knowledge needs to be stored on the server. If an attacker acquires this information, he can only verify the identity of the user and is not able to extract personal data about the user, thus preserving the users privacy.
 
-A client-side data processing can also be used to authenticate the user locally, e.g.\ when entering the phones unlock code. This can be used for intrusion detection or for locking stolen devices. However, server side authentication is easier to deploy, since changes in the authentication algorithms only need to be made in a single place. Authentication spoofing also is harder, since an attacker can analyze locally installed apps, but does not have access to the server application.
+A client-side data processing can also be used to authenticate the user locally, \eg when entering the phones unlock code. This can be used for intrusion detection or for locking stolen devices. However, server side authentication is easier to deploy, since changes in the authentication algorithms only need to be made in a single place. Authentication spoofing also is harder, since an attacker can analyze locally installed apps, but does not have access to the server application.
 
 For this paper, we implemented a client-side authentication mechanism. In our opinion, the privacy of a user is very important and personal data should not be transmitted over the network, when it can be avoided.
 
@@ -22,10 +22,6 @@ For this paper, we implemented a client-side authentication mechanism. In our op
 Since we are creating two different apps, a normal Android and an Android Wear variant, we quickly decided to share code among those apps. To do this, we created a general purpose acceleration pattern detection library for Android. This also allows rapid prototyping of the different approaches outlined in Chapter~\ref{chapter:approaches}.
 
 The main goal of this library is easy integration into existing apps to enhance the authentication security without the need for specially crafted implementations. With our library, apps can compose their own pattern recognition implementations in a modular way, based on a stable and modular basis.
-
-pipeline erklären
-TODO: hier pipeline schaubild einfügen.
-
 
 \subsection{Sensor recording in Android}\label{subsection:sensorrecording}
 In Android, the access to sensors of the device is managed by the \lstinline$SensorManager$ class. The process of obtaining the \lstinline$SensorManager$, getting the default acceleration sensor and registering a custom \lstinline$SensorEventListener myListener$ is shown in Listing~\ref{lst:sensormanager}. The mechanic of getting data is then defined in the \lstinline$SensorEventListener$, which is periodically called by the Android system with new data.
@@ -39,12 +35,12 @@ Sensor sensor = (manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
 mgr.registerListener(myListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
 \end{lstlisting}
 
-The rate at which the \lstinline$SensorEventListener$ gets callbacks is defined via the third parameter of the \lstinline$SensorManager.registerListener()$ function. In our case, we are using the fastest rate possible, since we don't want to miss even the slightest features of the movement pattern. Miluzzo et al.\cite{miluzzo2012tapprints} also have shown in their paper about guessing letters from device movement, that their results drastically improve with higher sensor sampling rate. Hence, we chose to simply poll the sensor at the fastest rate possible, with \lstinline$SensorManager.SENSOR_DELAY_FASTEST$. In our tests, this corresponds to a sapling rate of about $\SI{200}{\hertz}$.
+The rate at which the \lstinline$SensorEventListener$ gets callbacks is defined via the third parameter of the \lstinline$SensorManager.registerListener()$ function. In our case, we are using the fastest rate possible, since we don't want to miss even the slightest features of the movement pattern. Miluzzo \etal\cite{miluzzo2012tapprints} also have shown in their paper about guessing letters from device movement, that their results drastically improve with higher sensor sampling rate. Hence, we chose to simply poll the sensor at the fastest rate possible, with \lstinline$SensorManager.SENSOR_DELAY_FASTEST$. In our tests, this corresponds to a sapling rate of about $\SI{200}{\hertz}$.
 
 \subsection{Sensor measurement framework}
 Within the library, we provide a simple way to record sensor values into a predefined data structure, called \lstinline$SensorData$. All classes defined to measure and record the sensors are organized in the \lstinline$measurement$ package.
 
-The \lstinline$SensorData$, as shown in Listing~\ref{lst:sensordata}, consists of a two-dimensional array of floats, called \lstinline$data$. The first dimension of this defines the direction of the sensor measurement, i.e.\ X- Y- and Z-acceleration, while the second dimension defines the series of individual measurements. We also record a timestamp of the individual measurements in the \lstinline$timestamps$ array. This is necessary, since the time between measurements can vary, depending on the current load of the processor.
+The \lstinline$SensorData$, as shown in Listing~\ref{lst:sensordata}, consists of a two-dimensional array of floats, called \lstinline$data$. The first dimension of this defines the direction of the sensor measurement, \ie X- Y- and Z-acceleration, while the second dimension defines the series of individual measurements. We also record a timestamp of the individual measurements in the \lstinline$timestamps$ array. This is necessary, since the time between measurements can vary, depending on the current load of the processor.
 For example, if we access \lstinline$data[0][41]$, we get the \nth{42} measurement of the X-acceleration in the series. The corresponding timestamp can be accessed via \lstinline$timestamps[41]$.
 
 \begin{lstlisting}[float,
@@ -73,7 +69,7 @@ The reasoning behind converting the data from lists to arrays, is that arrays ha
 \subsection{Preprocessing of SensorData}
 To create meaningful and comparable sensormeasurements, we needed to implement a preprocessing step after recording the sensor data. Since the measured acceleration includes gravity, we need to factor it out, depending on how the user holds the device.
 
-To negate the effect gravity has on the measured data, we assume, that the device is relatively static in overall acceleration. This holds true for most applications, such as the device is lying on a desk or a user is carrying it around. We neglect the fact, that we cannot simply factor out gravity when we are measuring in a changing acceleration environment, e.g. driving in a car.
+To negate the effect gravity has on the measured data, we assume, that the device is relatively static in overall acceleration. This holds true for most applications, such as the device is lying on a desk or a user is carrying it around. We neglect the fact, that we cannot simply factor out gravity when we are measuring in a changing acceleration environment, \eg driving in a car.
 
 To factor out the gravity, we normalize the measured data to get a mean value of 0. We can do this by simply calculating the mean value and shift all sensor values by the negative mean, which results in the mean afterwards being 0. This results in an overall formula of: $ x_{new} = x - \mu $ with $\mu$ being the mean of the measurement.
 
@@ -107,12 +103,12 @@ which classifies the features of detected keystrokes on Android Wear devices. In
 
 \subsection{Classification and machine learning}
 To allow an identification of users according to the entered data, we need a way to compare and classify the features mentioned above. 
-As comparison algorithms, we can use an euclidean distance in $n$ dimensions. With this distance, we can compare two equal sized \lstinline$FeatureVectors$ by taking the square root of the distance of the individual features, squared. This formula is shown in Equation~\ref{eq:euclidiandistance}.
+As comparison algorithms, we can use an \gls{euclideandistance} in $n$ dimensions. With this distance, we can compare two equal sized \lstinline$FeatureVectors$ by taking the square root of the distance of the individual features, squared. This formula is shown in Equation~\ref{eq:euclidiandistance}.
 \begin{equation}\label{eq:euclidiandistance}
 d(a, b) = \sqrt{(a_1 - b_1)^2 + \ldots + (a_n - b_n)^2}
 \end{equation}
 
-Since our feature vectors are not necessarily equal in size, we decided to use a \gls{dtw} distance measurement, as several other papers conclude, that \gls{dtw} distances give significantly better results in comparing time series data\cite{ding2008querying}. This allows our algorithm to be resilient to erroneously detected keystrokes. To emphasize the idea, the difference in the two comparisons is displayed in Figure~\ref{fig:euclideandtw}. in this figure, we are comparing two very similar time series, but the euclidean distance is rather large, since the lower signal is shifted to the left and slightly stretched.
+Since our feature vectors are not necessarily equal in size, we decided to use a \gls{dtw} distance measurement, as several other papers conclude, that \gls{dtw} distances give significantly better results in comparing time series data\cite{ding2008querying}. This allows our algorithm to be resilient to erroneously detected keystrokes. To emphasize the idea, the difference in the two comparisons is displayed in Figure~\ref{fig:euclideandtw}. in this figure, we are comparing two very similar time series, but the \gls{euclideandistance} is rather large, since the lower signal is shifted to the left and slightly stretched.
 
 \begin{figure}
     \centering
@@ -123,10 +119,29 @@ Since our feature vectors are not necessarily equal in size, we decided to use a
 
 The standard \gls{dtw} algorithm uses dynamic programming, which fills a matrix of distance measurements and optimized the path through it. There are also other implementations like SparseDTW or FastDTW available that require significantly less computation time. We decided to stay with a simple approach, since we already condensed the feature vectors and the naive implementations is fast enough.
 
-TODO: glossary
-To classify the feature vectors, we implemented a k-NN algorithm according to Dudani's paper on this behalf\cite{dudani1976distance}. With this algorithm, we can compare a new feature vector to all other vectors and record the distance to those vectors. We can then decide according to the nearest neighbors, according to the distance measurement defined above, to which category (i.e.\ user) the new feature vector belongs. To do this, we look at the $k$ vectors with the smallest distance to the new vector and count, which category is present most often.
+To classify the feature vectors, we implemented a \gls{knn} algorithm according to Dudani's paper on this behalf\cite{dudani1976distance}. With this algorithm, we can compare a new feature vector to all other vectors and record the distance to those vectors. We can then decide according to the nearest neighbors, according to the distance measurement defined above, to which category (\ie user) the new feature vector belongs. To do this, we look at the $k$ vectors with the smallest distance to the new vector and count, which category is present most often.
 
-TODO: knn clustering bild?
+To illustrate the \gls{knn} algorithm, a two dimensional example, as shown in Figure~\ref{fig:knnvisualization}, is better suited. On the left, we can see a plot of the already present data, represented as circles. These data-points are already categorized in three classes, shown as different colors of the circles. To categorize a new data-point \textbf{x}, we can now calculate the distance of \textbf{x} to all other points via a distance measurement. The \gls{euclideandistance} for two points is plotted as arrows in this example.
+
+\begin{figure}
+    \subfloat{%
+        \begin{minipage}[c][1\width]{0.5\textwidth}%
+            \includegraphics[width=0.99\textwidth]{figures/knnOnAxis.png}
+        \end{minipage}
+    }
+    \subfloat{\centering{}%
+        \begin{minipage}[c][1\width]{0.5\textwidth}%
+            \centering
+            \includegraphics[width=0.99\textwidth]{figures/knnNearestNeighbors.png}
+        \end{minipage}
+    }
+    \caption{2D visualization of the \gls{knn} algorithm. On the left: Distances between points, defining nearness to neighbors; On the right: Nearest neighbors of hand drawn digits \cite{lewick2007clustering}}
+    \label{fig:knnvisualization}
+\end{figure}
+
+With the distances between the data, we can now determine the \emph{nearest neighbors}, \ie the data-pints with the smallest distance. We can then do a majority decision between the $k$-nearest neighbors, to which class the new data-point belongs. The effect of this parameter $k$ is visualized on the right side of Figure~\ref{fig:knnvisualization}. In most examples, the nearest neighbors have a strong tendency towards a class, however, in edge cases $k$ can influence the final decision towards a certain class.
+
+In our limited test, we found, that a small $k = 3$ TODO resulted in sufficiently good results. However, this parameter probably needs tuning for real applications, as the datasets might get arbitrarily large.
 
 Another approach would be to define and train neuronal networks to classify the available data. One open source framework for neuronal networks is Encog\cite{heaton2016encog}. Due to the complexity and time requirement, this approach exceeds the scope of this Bachelor's thesis, but definitely is a promising future approach, which needs to be evaluated.
 
@@ -134,7 +149,7 @@ Another approach would be to define and train neuronal networks to classify the 
 Since with recording acceleration data, we are generating many individual data sets, that need to be stored for later analysis. The lifetime of Android apps is mostly controlled by the user. Therefore, we need a way to safely and persistently store the recorded data. With this data, we can also compare different approaches in preprocessing and classification without the need to constantly interact with the device.
 
 \subsection{SQLite Database}
-To store the data on the device, we use a SQLite database. This is the standard Android database for persistent storage on the device. SQLite is an extremely lightweight database with little to no additional features. Since we do not need extra database features except inserting and querying the data, SQLite is a good fit for our use case.
+To store the data on the device, we use a SQLite database. This is the standard Android SQL database for persistent storage on the device. SQLite is an extremely lightweight database with little to no additional features. Since we do not need extra database features except inserting and querying the data, SQLite is a good fit for our use case.
 
 SQLite also stores the database in a single standardized file with a user-defined name, in our case \lstinline$SensorMeasurements.db$. This allows to share the data between devices for debugging and data visualization. In our example prototype, the database is regularly copied to a folder accessible with USB, since the usual storage of the database is inaccessible for other processes running on the device. We then can access the database copy from a connected PC, where we can visualize the algorithms directly on the data with a simple Python script.
 
@@ -151,26 +166,22 @@ Since the measurement data is persistently stored, we can also implement a backg
 
 Currently, this is only a plan for future improvements, as of now, we only directly check the measured data. However this can easily be implemented with additional work.
 \section{App prototypes}
-The individual app prototypes and source code are available online via GitHub (\url{https://github.com/pfent/GesturesID}) or via the attached CD. The structure of the files is as follows: In the ``Android'' folder, there is an Android Studio project called ``GesturesID'', which contains the source code of the prototypes. In the same folder, there are also two \lstinline$.apk$ files, which can be installed on an Android, respectively an Android Wear device. This project can be built via the Android Studio IDE or via the Gradle wrapper script \lstinline$gradlew$.
+The individual app prototypes and source code are available online via GitHub (\url{https://github.com/pfent/GesturesID}) or via the attached CD. The structure of the files is as follows: In the ``Android'' folder, there is an Android Studio project called ``GesturesID'', which contains the source code of the prototypes. In the same folder, there are also two \lstinline$.apk$ files, which can be installed on an Android, respectively an Android Wear device. This project can be built via the Android Studio \gls{ide} or via the Gradle wrapper script \lstinline$gradlew$.
 
-The source code itself is structured in 3 different modules: \lstinline$app$: the Android specific source code; \lstinline$wear$: the Android wear specific code and \lstinline$sensorprocessing$: the code that can be used in both apps.
+The source code itself is structured in 3 different modules: \lstinline$app$: the Android specific source code; \lstinline$wear$: the Android wear specific code and \lstinline$sensorprocessing$: the code that can be used in both apps. Generally speaking, all the portable classes are located in the \lstinline$sensorprocessing$ module. This includes the implementation for recording the sensors, preprocessing, analyzing and classification. The corresponding classes are structured in loosely coupled \glspl{package}, which are accordingly named.
 
-TODO: figure of module structure
-
-Sensorprocessing: Implementation of the sensor recording, preprocessing, analyzing and classification
-loosely coupled packages
-additionally: measurementmanager for SQL, Listener interface used for callbacks when a pattern has been entered.
+Additionally, the portable library module also provides a \lstinline$MeasurementManager$ for persistently storing the data. To interface with platform specific code, we also provide a Listener-interface, that is used for callbacks when a pattern has been recorded.
 
 \subsection{Android application}
 TODO: application screenshots
 
-App: Phone / Standard Android module, Activities for Text input / user information what this app does
-application / start menu launcher for training
-another one for authentication
+App: Phone / Standard Android module and App
+Two main Activities, one for training, one for authentication testing. Both are available to launch via Android's app launcher.
+Training Activity displays Fragments that promt to enter the name and pattern passwords. \lstinline$PatternFocusChangeListener$ to define start and end of text input by analysing the focus of the app. When the user taps on the input field, we start to measure, when he presses enter on the keyboard, we finish.
 
-\lstinline$PatternFocusChangeListener$ to define start and end of text input
+For authentication, we prompt with a Fragment, similar to the training, but we then process the data with an authenticator: normalizer, exponential smoothing, PhoneKeystrokeFeatureExtractor, kNN Classifier with DTW distance
 
-combined authenticator: accelerometer, normalizer, smoothing, PhoneKeystrokeFeatureExtractor, kNN Classifier with DTW distance
+TODO: Listing of the authentication process
 
 \subsection{Android Wear application}
 TODO: wear screenshots

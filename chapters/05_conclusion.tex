@@ -1,0 +1,21 @@
+\chapter{Conclusion}\label{chapter:conclusion}
+
+All in all: In this paper, we identified users based solely on acceleration data. Proof of concept, 
+
+\section{Current state}
+
+Many tunable parameters with a relatively small test size -> results not universally applicable. 80\% with a rather simple approach is really good!
+
+However, performance is in a realistic range for practical use. Input of a password takes several seconds, during which we can train our kNN classifier with >100 previous measurements.
+
+In real applications, this training probably only needs to take place ONCE. A single measurement does not take a full second, even on the Sony Smartwatch 3.
+
+Smartrings with even lower powered processors are probably too slow for processing on the ring, but good chances with future development in low power processor speeds.
+
+\section{Future prospects}
+
+Maybe interpolation of measurements for real word usage? Overall the feature extraction is in a good shape.
+
+Distances between keystrokes on the watch also needs work, currently only a concept.
+
+Biggest improvement: neuronal networks to classify and detect promise better detection rates. Also faster to classify data, but potentially need longer computation time for learning.

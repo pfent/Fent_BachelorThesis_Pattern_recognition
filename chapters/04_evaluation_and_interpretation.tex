@@ -1,5 +1,36 @@
-\chapter{Evaluation and Interpretation}\label{chapter:evaluation}
+\chapter{Evaluation}\label{chapter:evaluation}
 
 \section{Test setup}
 
-\section{Rejection rate vs.\ accuracy tradeoff}
+5 users with 10 measurements each, plus 1 with 5.
+
+First: training with the first 9, respectively 4 measurements, then the last measurement as "detection test" on phone only!
+
+
+
+\section{Runtime efficiency}
+
+For debugging, we are logging the results and itermediates to an additional database, relatively poor performance of $4.3$ measurements per second on a OnePlus One.
+
+without logging to the database, we can get around $21$ measurements per second, but there are still parallelization improvements possible.
+
+quick test showed, that esp. the learning phase can be done in parallel and scales extremely well. Potential speedup ~4x.
+
+on phone vs. on watch
+
+On Sony Smartwatch 3, performance is proportionally to the processor speed: aprox $1.8$ measurements per second in debugging mode, with potential speedups with parallelization and no logging factor 5x~6x. With a measured Bluetooth transfer rate of ~15KB/s, this is still faster then transfering the sensordata to the phone and back!
+
+\section{Optimal parameters for accuracy}
+
+4 main tunable parameters: windowsize with the peak detection, the peak detection stringency, the DTW window size and the $k$ in knn algorithm.
+
+optimal peak window size at 67 measurements, as calculated in section~TODO
+
+stringency showed best results at 2
+
+dtw parameter expectedly did not improve results with bigger window sizes
+
+$k = 7$ resulted in the best user detection rates
+
+with optimal parameters, we reached an detection rate of 80\%
+

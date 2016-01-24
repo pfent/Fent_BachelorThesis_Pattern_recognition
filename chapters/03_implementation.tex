@@ -75,8 +75,6 @@ To factor out the gravity, we normalize the measured data to get a mean value of
 
 To enhance the sensor recordings, we also implemented smoothing functions, that are able to dampen sensor noise. As for this paper, we implemented a simple moving average and exponential smoothing filters. The simple moving average algorithm works by averaging a certain number of measurements in a so called ``window size''. For comparison, we also implemented a simple moving average filter, which factors in the last smoothed value with a factor $\alpha$ with $0 < \alpha < 1$.
 
-TODO: normal signal vs. moving average vs. exponential figure.
-
 Since the rate of sensor measurements can vary with the processor load, we also could interpolate the measurements to a continuous function or simply a fixed rate. A technique to implement this would for example be cubic spline interpolation. However our sensor measurements are fairly regular and sufficient for a proof-of-concept, with a standard variance in measurements $< 0.01ms$. In real world applications with varying loads and background activity during sensor measurements, this might be needed.
 
 Since there might be multiple preprocessing steps needed, we also implemented a simple \lstinline$ComposingPreprocessor$, which can combine multiple preprocessing steps to a single one. We then simply apply the other preprocessors sequentially as specified. Thus we can for example first normalize the data to a mean of 0 and then smooth it with one of the implemented smoothing functions.
@@ -141,7 +139,7 @@ To illustrate the \gls{knn} algorithm, a two dimensional example, as shown in Fi
 
 With the distances between the data, we can now determine the \emph{nearest neighbors}, \ie the data-pints with the smallest distance. We can then do a majority decision between the $k$-nearest neighbors, to which class the new data-point belongs. The effect of this parameter $k$ is visualized on the right side of Figure~\ref{fig:knnvisualization}. In most examples, the nearest neighbors have a strong tendency towards a class, however, in edge cases $k$ can influence the final decision towards a certain class.
 
-In our limited test, we found, that a small $k = 3$ TODO resulted in sufficiently good results. However, this parameter probably needs tuning for real applications, as the datasets might get arbitrarily large.
+In our limited test, we found, that $k = 7$ resulted in sufficiently good results. However, this parameter probably needs tuning for real applications, as the datasets might get arbitrarily large.
 
 Another approach would be to define and train neuronal networks to classify the available data. One open source framework for neuronal networks is Encog\cite{heaton2016encog}. Due to the complexity and time requirement, this approach exceeds the scope of this Bachelor's thesis, but definitely is a promising future approach, which needs to be evaluated.
 
@@ -166,14 +164,19 @@ Since the measurement data is persistently stored, we can also implement a backg
 
 Currently, this is only a plan for future improvements, as of now, we only directly check the measured data. However this can easily be implemented with additional work.
 \section{App prototypes}
-The individual app prototypes and source code are available online via GitHub (\url{https://github.com/pfent/GesturesID}) or via the attached CD. The structure of the files is as follows: In the ``Android'' folder, there is an Android Studio project called ``GesturesID'', which contains the source code of the prototypes. In the same folder, there are also two \lstinline$.apk$ files, which can be installed on an Android, respectively an Android Wear device. This project can be built via the Android Studio \gls{ide} or via the Gradle wrapper script \lstinline$gradlew$.
+The individual app prototypes and source code are available online via GitHub (\url{https://github.com/pfent/GesturesID}) or via the attached CD. The structure of the files is as follows: In the ``Android'' folder, there is an Android Studio project called ``GesturesID'', which contains the source code of the prototypes. In the same folder, there are also two \lstinline$.apk$ files, which can be installed on an Android, respectively an Android Wear device. This project can be built via the Android Studio \gls{ide} or via evecuting the Gradle wrapper script \lstinline$gradlew$.
 
 The source code itself is structured in 3 different modules: \lstinline$app$: the Android specific source code; \lstinline$wear$: the Android wear specific code and \lstinline$sensorprocessing$: the code that can be used in both apps. Generally speaking, all the portable classes are located in the \lstinline$sensorprocessing$ module. This includes the implementation for recording the sensors, preprocessing, analyzing and classification. The corresponding classes are structured in loosely coupled \glspl{package}, which are accordingly named.
 
 Additionally, the portable library module also provides a \lstinline$MeasurementManager$ for persistently storing the data. To interface with platform specific code, we also provide a Listener-interface, that is used for callbacks when a pattern has been recorded.
 
 \subsection{Android application}
-TODO: application screenshots
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/MeasurementPhone.png}
+    \caption{Screenshots of the prototype Android \gls{app}, in sequence of execution. The left three screenshots show the interface to enter training data, the right two screenshots, how the data is being processed}
+    \label{fig:phonescreenshot}
+\end{figure}
 
 App: Phone / Standard Android module and App
 Two main Activities, one for training, one for authentication testing. Both are available to launch via Android's app launcher.
@@ -181,7 +184,30 @@ Training Activity displays Fragments that promt to enter the name and pattern pa
 
 For authentication, we prompt with a Fragment, similar to the training, but we then process the data with an authenticator: normalizer, exponential smoothing, PhoneKeystrokeFeatureExtractor, kNN Classifier with DTW distance
 
+TODO Smoothing unnecessary, since the peak detection algorithm already factors in the standard deviation.
+
+\begin{lstlisting}[float,
+caption={Minimum working example to extract keystroke features},
+label={lst:keystrokefeatures}]
+SensorData data = new ComposingPreprocessor(
+    new Selector(2), // Select Z-Axis
+    new Normalizer()
+).preprocess(
+    MeasurementManager.getInstance(context).getSensorData(measurementID)
+);
+FeatureVectors vectors = new PhoneKeystrokeFeatureExtractor().extractFeatures(data);
+\end{lstlisting}
+
 TODO: Listing of the authentication process
+
+\begin{lstlisting}[float,
+caption={Minimum working example to classify a given FeatureVectors according to previously learened categories},
+label={lst:authenticationprocess}]
+int classify
+Classifier classifier = new kNNClassifier(categories, new dTWDistancer(3), 7);
+int category = classifier.classify(featureVectors);
+// category now contains the index of the category in categories[][], where featureVectors belongs to
+\end{lstlisting}
 
 \subsection{Android Wear application}
 TODO: wear screenshots

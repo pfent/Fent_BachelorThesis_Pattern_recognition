@@ -1,5 +1,5 @@
 \chapter{Implementation}\label{chapter:implementation}
-For this paper, we are implementing app prototypes to demonstrate the capability of pattern recognition as personal authentication factor. We chose Android as the main smart device platform, since access to development tools and documentation is freely available. Also Android applications are developed using Java, which allows to use many existing libraries. Android code also remains portable across different form factors of devices, such as phones, tablets and smartwatches running Android-Wear.
+For this thesis, we are implementing app prototypes to demonstrate the capability of pattern recognition as personal authentication factor. We chose Android as the main smart device platform, since access to development tools and documentation is freely available. Also Android applications are developed using Java, which allows to use many existing libraries. Android code also remains portable across different form factors of devices, such as phones, tablets and smartwatches running Android-Wear.
 
 The development and testing of the Android application was conducted on the author's personal devices, an OnePlus One and a Nexus 10. To be able to develop an Android Wear app, the Chair of Operating Systems kindly provided a Sony Smartwatch 3.
 
@@ -16,7 +16,7 @@ There are also approaches to privacy protecting biometric authentication by loca
 
 A client-side data processing can also be used to authenticate the user locally, \eg when entering the phones unlock code. This can be used for intrusion detection or for locking stolen devices. However, server side authentication is easier to deploy, since changes in the authentication algorithms only need to be made in a single place. Authentication spoofing also is harder, since an attacker can analyze locally installed apps, but does not have access to the server application.
 
-For this paper, we implemented a client-side authentication mechanism. In our opinion, the privacy of a user is very important and personal data should not be transmitted over the network, when it can be avoided.
+For this thesis, we implemented a client-side authentication mechanism. In our opinion, the privacy of a user is very important and personal data should not be transmitted over the network, when it can be avoided.
 
 \section{General purpose Android acceleration pattern detection library}
 Since we are creating two different apps, a normal Android and an Android Wear variant, we quickly decided to share code among those apps. To do this, we created a general purpose acceleration pattern detection library for Android. This also allows rapid prototyping of the different approaches outlined in Chapter~\ref{chapter:approaches}.
@@ -35,7 +35,7 @@ Sensor sensor = (manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
 mgr.registerListener(myListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
 \end{lstlisting}
 
-The rate at which the \lstinline$SensorEventListener$ gets callbacks is defined via the third parameter of the \lstinline$SensorManager.registerListener()$ function. In our case, we are using the fastest rate possible, since we don't want to miss even the slightest features of the movement pattern. Miluzzo \etal\cite{miluzzo2012tapprints} also have shown in their paper about guessing letters from device movement, that their results drastically improve with higher sensor sampling rate. Hence, we chose to simply poll the sensor at the fastest rate possible, with \lstinline$SensorManager.SENSOR_DELAY_FASTEST$. In our tests, this corresponds to a sapling rate of about $\SI{200}{\hertz}$.
+The rate at which the \lstinline$SensorEventListener$ gets callbacks is defined via the third parameter of the \lstinline$SensorManager.registerListener()$ function. In our case, we are using the fastest rate possible, since we don't want to miss even the slightest features of the movement pattern. Miluzzo \etal\cite{miluzzo2012tapprints} also have shown in their paper about guessing letters from device movement, that their results drastically improve with higher sensor sampling rate. Hence, we chose to simply poll the sensor at the fastest rate possible, with \lstinline$SensorManager.SENSOR_DELAY_FASTEST$. In our tests, this corresponds to a sampling rate of about $\SI{200}{\hertz}$.
 
 \subsection{Sensor measurement framework}
 Within the library, we provide a simple way to record sensor values into a predefined data structure, called \lstinline$SensorData$. All classes defined to measure and record the sensors are organized in the \lstinline$measurement$ package.
@@ -73,7 +73,7 @@ To negate the effect gravity has on the measured data, we assume, that the devic
 
 To factor out the gravity, we normalize the measured data to get a mean value of 0. We can do this by simply calculating the mean value and shift all sensor values by the negative mean, which results in the mean afterwards being 0. This results in an overall formula of: $ x_{new} = x - \mu $ with $\mu$ being the mean of the measurement.
 
-To enhance the sensor recordings, we also implemented smoothing functions, that are able to dampen sensor noise. As for this paper, we implemented a simple moving average and exponential smoothing filters. The simple moving average algorithm works by averaging a certain number of measurements in a so called ``window size''. For comparison, we also implemented a simple moving average filter, which factors in the last smoothed value with a factor $\alpha$ with $0 < \alpha < 1$.
+To enhance the sensor recordings, we also implemented smoothing functions, that are able to dampen sensor noise. As for this thesis, we implemented a simple moving average and exponential smoothing filters. The simple moving average algorithm works by averaging a certain number of measurements in a so called ``window size''. For comparison, we also implemented a simple moving average filter, which factors in the last smoothed value with a factor $\alpha$ with $0 < \alpha < 1$.
 
 Since the rate of sensor measurements can vary with the processor load, we also could interpolate the measurements to a continuous function or simply a fixed rate. A technique to implement this would for example be cubic spline interpolation. However our sensor measurements are fairly regular and sufficient for a proof-of-concept, with a standard variance in measurements $< 0.01ms$. In real world applications with varying loads and background activity during sensor measurements, this might be needed.
 
@@ -112,9 +112,9 @@ Since our feature vectors are not necessarily equal in size, we decided to use a
     \label{fig:euclideandtw}
 \end{figure}
 
-The standard \gls{dtw} algorithm uses dynamic programming, which fills a matrix of distance measurements and optimized the path through it. There are also other implementations like SparseDTW or FastDTW available that require significantly less computation time. We decided to stay with a simple approach, since we already condensed the feature vectors and the naive implementations is fast enough.
+The standard \gls{dtw} algorithm uses dynamic programming, which fills a matrix of distance measurements and optimized the path through it. There are also other implementations like SparseDTW or FastDTW available that require significantly less computation time. We decided to stay with a simple approach, since we already condensed the feature vectors and the dynamic programming implementation is fast enough.
 
-To classify the feature vectors, we implemented a \gls{knn} algorithm according to Dudani's paper on this behalf\cite{dudani1976distance}. With this algorithm, we can compare a new feature vector to all other vectors and record the distance to those vectors. We can then decide according to the nearest neighbors, according to the distance measurement defined above, to which category (\ie user) the new feature vector belongs. To do this, we look at the $k$ vectors with the smallest distance to the new vector and count, which category is present most often.
+To classify the feature vectors, we implemented a \gls{knn} algorithm according to Dudani's paper on this behalf\cite{dudani1976distance}. With this algorithm, we can compare a new feature vector to all other vectors and record the distance to those vectors. We can then decide depending on the nearest neighbors, according to the distance measurement, to which category (\ie user) the new feature vector belongs. To do this, we look at the $k$ vectors with the smallest distance to the new vector and count, which category is present most often.
 
 To illustrate the \gls{knn} algorithm, a two dimensional example, as shown in Figure~\ref{fig:knnvisualization}, is better suited. On the left, we can see a plot of the already present data, represented as circles. These data-points are already categorized in three classes, shown as different colors of the circles. To categorize a new data-point \textbf{x}, we can now calculate the distance of \textbf{x} to all other points via a distance measurement. The \gls{euclideandistance} for two points is plotted as arrows in this example.
 
@@ -151,7 +151,7 @@ SQLite also stores the database in a single standardized file with a user-define
 The schema of the database is displayed in Figure~\ref{fig:dbschema}. With this schema, we are  storing the raw recorded data in so called ``datasets''. $N$ of the data points in a dataset form a whole measurement, which is linked to a single user. We also record the keystrokes in each of the measurements, when the user is using the on-screen keyboard. We then can correlate the ``sensortime'' we measured the individual acceleration in the dataset with the ``keystroketime'' to compare, if we correctly detected a keystroke. We also deduced the average keystroke and sensor-measurement frequency used in the parameters for the algorithms mentioned in the last sections.
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{figures/databaseschema.png}
+    \includegraphics[width=0.97\textwidth]{figures/databaseschema.png}
     \caption{Schema of the SQLite database used by the prototypes}
     \label{fig:dbschema}
 \end{figure}

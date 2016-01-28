@@ -81,14 +81,14 @@ For recognition of key presses with smartwatches, we examined a scenario of a us
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{figures/WatchCoordinateSystem.png}
+    \includegraphics[width=0.9147\textwidth]{figures/WatchCoordinateSystem.png}
     \caption{The coordinate system of a smartwatch while typing on a keyboard}
     \label{fig:watchcoordinate}
 \end{figure}
 
 Wang \etal\cite{wang2015mole} discussed in their paper on MotionLeaks for MobiCom'15, that the key press timings on keyboards can be extracted by the Z-axis movement of the watch. When the user presses a key on the keyboard, the user's finger dips and the wrist also undergoes a partial dipping motion. This motion can be detected by the Z-axis acceleration, in combination with a peak detection algorithm, similar to the one used with phones in Section~\ref{subsection:phones}.
 
-Wang \etal also improoved their peak detection algorithm by chaining a peak detection tool with a bagged decision classifier. Since their goal was to guess individual typed keys instead of analysing the pattern as whole, the additional computational overhead might be worthwhile. This however, does not hold for our approach of matching the whole  input pattern, thus we use a simple peak detection algorithm.
+Wang \etal also improved their peak detection algorithm by chaining a peak detection tool with a bagged decision classifier. Since their goal was to guess individual typed keys instead of analysing the pattern as whole, the additional computational overhead might be worthwhile. This however, does not hold for our approach of matching the whole  input pattern, thus we use a simple peak detection algorithm.
 
 Additionally to keystroke pattern recognition the overall movement of the watch while typing can be used as an additional authentication vector. Different users might move their hands differently for text input. However we are not aware of scientific studies measuring the effectiveness of this approach.
 
@@ -118,4 +118,4 @@ For authentication purposes, an timely response to whether or not the authentica
 
 \subsection{Conclusion}
 As consequence of these limitations, we decided against using an gait recognition approach as personal authentication factor. Nonetheless, gait recognition might be an additional approach for intrusion detection. For example the device itself can recognise it being stolen by detecting other gait patterns. This allows the device to take counter-measures, \eg lock itself, alert the user and activate ``Find My Device'' functionality.
-In contrast, gait recognition is not suitable for concrete, immediate authentication needs, as it is the vision of this paper.
+In contrast, gait recognition is not suitable for concrete, immediate authentication needs, as it is the vision of this thesis.

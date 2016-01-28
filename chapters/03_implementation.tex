@@ -91,13 +91,10 @@ x & = \frac{\SI{200}{Hz}}{\SI{3}{Hz}}\\
 x & = 66 \frac{2}{3} = 66,\overline{6} \approx \underline{\underline{67}}
 \end{split}\end{equation}
 
-Based on this algorithm, we implemented two distinct feature extraction mechanisms:
-
-A \lstinline$PhoneKeystrokeFeatureExtractor$,\\
+Based on this algorithm, we implemented a \lstinline$PhoneKeystrokeFeatureExtractor$,
 which classifies the features of detected keystrokes on conventional Android devices, such as phones or tablets. As a proof of concept, we are extracting the tap intensity and the individual interval of the keystrokes.
     
-A \lstinline$WearKeystrokeFeatureExtractor$,\\
-which classifies the features of detected keystrokes on Android Wear devices. In this approach, we are recording the lateral movement additionally to the tap intensity and the interval.
+We did not implement a separate feature extraction mechanism for watches due to time limitations, but future approaches are to record the lateral movement additionally to the tap intensity and the interval. This could potentially yield better and more distinctive wear features.
 
 \subsection{Classification and machine learning}
 To allow an identification of users according to the entered data, we need a way to compare and classify the features mentioned above. 
@@ -178,13 +175,11 @@ Additionally, the portable library module also provides a \lstinline$Measurement
     \label{fig:phonescreenshot}
 \end{figure}
 
-App: Phone / Standard Android module and App
-Two main Activities, one for training, one for authentication testing. Both are available to launch via Android's app launcher.
-Training Activity displays Fragments that promt to enter the name and pattern passwords. \lstinline$PatternFocusChangeListener$ to define start and end of text input by analysing the focus of the app. When the user taps on the input field, we start to measure, when he presses enter on the keyboard, we finish.
+The standard Android \gls{app} provides two \glspl{activity}. Both \glspl{activity} are launchable via Android's integrated \gls{app} launcher,\ie there are two different \gls{app} icons. The first \gls{activity} ``GesturesID'' is used to create training data and only records data. This activity can be seen in the screenshots on the left of Figure~\ref{fig:phonescreenshot}.
 
-For authentication, we prompt with a Fragment, similar to the training, but we then process the data with an authenticator: normalizer, exponential smoothing, PhoneKeystrokeFeatureExtractor, kNN Classifier with DTW distance
+In the current implementation, the user is first prompted to input a name, which is later used to identify the individual measurements. Afterwards, the user is prompted to enter a predefined sequence  to generate acceleration data for testing the pattern detection algorithm. The start and end of measurements is determined by a \lstinline$PatternFocusChangeListener$. This listener analyzes the ``focus'' of the user and generates events, when the user taps into the \lstinline$EditText$ component to input text. When the user taps the enter key or proceeds to the next input field, this ``focus'' is lost and the listener fires an end event and we stop recording data.
 
-TODO Smoothing unnecessary, since the peak detection algorithm already factors in the standard deviation.
+In the second \gls{activity}, the data is then processed with the algorithms described in the last sections. For the prototype, we are only using the normalized z-axis data. From this normalized data we then extract the features in a \lstinline$PhoneKeystrokeFeatureExtractor$, which first determines the peaks aka keystrokes in this data. From these peaks we then can calculate the intensity of the individual taps and the intervals, in which the keys were stroked. A small code sample, how this could be implemented using our library can be seen in Listing~\ref{lst:keystrokefeatures}.
 
 \begin{lstlisting}[float,
 caption={Minimum working example to extract keystroke features},
@@ -198,23 +193,42 @@ SensorData data = new ComposingPreprocessor(
 FeatureVectors vectors = new PhoneKeystrokeFeatureExtractor().extractFeatures(data);
 \end{lstlisting}
 
-TODO: Listing of the authentication process
+Even though, we implemented and tested smoothing of the sensor data, we found, that smoothing the measurements did not provide better keystroke recognition rates, but also decrease accuracy in the tap intensities. With further investigation, we found that smoothing the measurements is unnecessary overhead, since the peak detection algorithm is specially engineered to ignore measurement noise via the standard deviation.
+
+After this learning phase, we then can classify new measurements, which have been processed in the same way as the training data. The classification process is displayed in Listing~\ref{lst:authenticationprocess}. For this prototype, we are using a \gls{knn} classifier with a \gls{dtw} distance measurement. The \gls{app} then displays the time used to process all of the previously recorded measurements and displays the location, where it stored the intermediate results.
 
 \begin{lstlisting}[float,
-caption={Minimum working example to classify a given FeatureVectors according to previously learened categories},
+caption={Minimum working example to classify a given \lstinline$FeatureVectors$ according to previously learened \lstinline$categories$},
 label={lst:authenticationprocess}]
-int classify
-Classifier classifier = new kNNClassifier(categories, new dTWDistancer(3), 7);
-int category = classifier.classify(featureVectors);
-// category now contains the index of the category in categories[][], where featureVectors belongs to
+int classify (FeatureVectors[][] categories, FeatureVectors featureVectors)
+    Classifier classifier = new kNNClassifier(categories, new dTWDistancer(3), 7);
+    int category = classifier.classify(featureVectors);
+    // category now contains the index of the category in categories[][], where featureVectors belongs to
+    return category
+}
 \end{lstlisting}
 
 \subsection{Android Wear application}
-TODO: wear screenshots
+\begin{figure}
+    \subfloat{%
+        \begin{minipage}[c][1\width]{0.5\textwidth}%
+            \includegraphics[width=0.999\textwidth]{figures/MeasurementWatch.png}
+        \end{minipage}
+    }
+    \subfloat{\centering{}%
+        \begin{minipage}[c][1\width]{0.5\textwidth}%
+            \centering
+            \includegraphics[width=0.999\textwidth]{figures/EvaluationWatch.png}
+        \end{minipage}
+    }
+    \caption{Screenshots of the prototype Android Wear \gls{app}, in sequence of execution. The left two screenshots show the interface to record training data, the right two screenshots, how the data is being processed}
+    \label{fig:wearscreenshots}
+\end{figure}
+The Android Wear \gls{app} is roughly built in the same shape as the Android \gls{app}. The \gls{app} has two launchable \glspl{activity}, one to record patterns and one to process them. However, the implementation is less sophisticated, due to time constraints. The recording of patterns is manually initiated by clicking a button, as displayed in the left half of Figure~\ref{fig:wearscreenshots}. After starting the measurement, the button turns red and the measurement can be stopped by clicking the button again.
 
-only start / stop of pattern recording
-implementation should be similar to Android, 
+While the Android \gls{app} can automatically associate a user with a measurement by prompting to enter a name, this is not possible on Android Wear due to the lack of text entering methods on this platform. This would be possible for example with a companion \gls{app} on a PC or on a phone, but has not been implemented yet.
+
+The previously recorded measurements can be processed directly on the device, via the second \gls{activity}: \lstinline$EvaluationActivity$, displayed on the right half of Figure~\ref{fig:wearscreenshots}. Currently the implementation only processes the measurement in the same way as the Android \gls{app}. This might not result in the best user-detection results, but can serve as a approximate performance measurement.
 
 \subsection{Limitations}
-
-Right now: only proof of concept, due to limited time. No real authentication of users. demonstrating 
+In the current state, both prototypes work as a proof of concept. They allow to extract data and compare different approaches and implementations of the algorithms described in Chapter~\ref{chapter:approaches}. To authenticate and validate user identities, additional work needs to be done, which can be largely based on the results of this thesis.

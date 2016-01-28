@@ -1,21 +1,14 @@
 \chapter{Conclusion}\label{chapter:conclusion}
-
-All in all: In this paper, we identified users based solely on acceleration data. Proof of concept, 
+To conclude this paper, we can summarize, that our implementation serves as a proof of concept. We reached the goal of identifying users based solely on acceleration data and showed how to efficiently extract accurate features from this acceleration data.
 
 \section{Current state}
+Even though the tests we conducted had a relatively small sample size, thus the results are not universally applicable. A 80\% detection rate of our system shows, that it can be used for safer and more convenient authentication mechanisms.
 
-Many tunable parameters with a relatively small test size -> results not universally applicable. 80\% with a rather simple approach is really good!
+The performance of processing and classification of acceleration data is in a realistic range for practical use. Entering a password takes several seconds, \ie the same duration in which we can process and train a classification algorithm with >100 previous measurements. For real usages, the processing and training phase does not need to take place every time, but can be done once and afterwards simply read from storage.
 
-However, performance is in a realistic range for practical use. Input of a password takes several seconds, during which we can train our kNN classifier with >100 previous measurements.
-
-In real applications, this training probably only needs to take place ONCE. A single measurement does not take a full second, even on the Sony Smartwatch 3.
-
-Smartrings with even lower powered processors are probably too slow for processing on the ring, but good chances with future development in low power processor speeds.
+Even our approach of calculating everything each time performs reasonable well on smartphones, as well as on a smartwatch. Authentication on the Sony Smartwatch 3 takes aproximately 30 seconds, which is not great, but still in an acceptable time-frame for watch \glspl{app}. Our implementation however is not suitable for smartrings, because with even lower powered processors, they are probably too slow for data processing on the ring. Since smartrings are still in a concept phase, there are good chances that with future development in low power processor speeds smartrings will get processors with comparable speed to smartwatches nowadays.
 
 \section{Future prospects}
+For future projects, our implementation can be used with small adaptions to the individual use case. Nevertheless, there are still many possible extensions and improvements left for future work. Currently all of the parameters are statically determined and might not work the same on all devices, especially with different sensor recording rates. An attempt to work with different recording rates would be interpolation of measurements, \eg with cubic spline interpolation, to get continuous sensor data.
 
-Maybe interpolation of measurements for real word usage? Overall the feature extraction is in a good shape.
-
-Distances between keystrokes on the watch also needs work, currently only a concept.
-
-Biggest improvement: neuronal networks to classify and detect promise better detection rates. Also faster to classify data, but potentially need longer computation time for learning.
+Overall the Feature extraction steps are in a good shape, but especially implementing the specific feature extractions for the Android Wear \gls{app} should make it practical. The biggest potential improvement left to evaluate would be to use neuronal networks to classify the measurements. Neuronal networks provided immense steps forward for speech and image recognition in the last few years and many neuronal network implementations have been open sourced recently.

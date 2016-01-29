@@ -67,7 +67,7 @@ Since arrays with static size are not suitable for building up data, we also def
 The reasoning behind converting the data from lists to arrays is, that arrays have significantly less overhead in accessing random data as well as memory consumption. Also the preprocessing and feature extraction algorithms usually operate on simple arrays. So instead of converting the data for each step, we only use dynamic lists for buildup and use simple arrays afterwards.
 
 \subsection{Preprocessing of SensorData}
-To create meaningful and comparable sensormeasurements, we needed to implement a preprocessing step after recording the sensor data. Since the measured acceleration includes gravity, we need to factor it out, depending on how the user holds the device.
+To create meaningful and comparable sensor measurements, we needed to implement a preprocessing step after recording the sensor data. Since the measured acceleration includes gravity, we need to factor it out, depending on how the user holds the device.
 
 To negate the effect gravity has on the measured data, we assume, that the device is relatively static in overall acceleration. This holds true for most applications, such as the device is lying on a desk or a user is carrying it around. We neglect the fact, that we cannot simply factor out gravity when we are measuring in a changing acceleration environment, \eg driving in a car.
 
@@ -80,9 +80,9 @@ Since the rate of sensor measurements can vary with the processor load, we also 
 Since there might be multiple preprocessing steps needed, we also implemented a simple \lstinline$ComposingPreprocessor$, which can combine multiple preprocessing steps to a single one. We then simply apply the other preprocessors sequentially as specified. Thus we can for example first normalize the data to a mean of 0 and then smooth it with one of the implemented smoothing functions.
 
 \subsection{Feature extraction from SensorData}\label{subsection:featureextraction}
-After the data is comparable, we can proceed to extract certain features, we want to compare. We do this, by measuring certain features of the data and storing those features in so called \lstinline$FeatureVectors$. Those \lstinline$FeatureVectors$ have the advantage of being more condensed and smaller in file size than the raw data.
+After the data is comparable, we can proceed to extract certain features, we want to compare. This is done by measuring certain features of the data and storing those features in so called \lstinline$FeatureVectors$. Those \lstinline$FeatureVectors$ have the advantage of being more condensed and smaller in file size than the raw data.
 
-For our approach of detecting keystrokes, we first utilize a peak detection algorithm to locate the individual keystrokes as outlined in Section~\ref{subsection:keystrokerecognition}. For this, we are using the peak detection algorithm proposed by Palshikar, which has been implemented by Tinevez for the Fiji image processing library \cite{palshikar2009simple, tinevez2011peak}. For best results, we used a window size of 67 measurements to detect keystrokes. The window size is based on the average keystroke frequency, which we measured to about $\SI{3}{Hz}$. We then can calculate an appropriate size of the window to detect, as shown in Equation~\ref{eq:windowsize}.
+For our approach of detecting keystrokes, we first utilize a peak detection algorithm to locate the individual keystrokes as outlined in Section~\ref{subsection:keystrokerecognition}. For this, we are using the peak detection algorithm proposed by Palshikar, which has been implemented for the Fiji image processing library \cite{palshikar2009simple, tinevez2011peak}. For best results, we used a window size of 67 measurements to detect keystrokes. The window size is based on the average keystroke frequency, which we measured to about $\SI{3}{Hz}$. We then can calculate an appropriate size of the window to detect, as shown in Equation~\ref{eq:windowsize}.
 
 \begin{equation}\label{eq:windowsize}\begin{split}
 \textrm{windowsize} * \textrm{sampling frequency} & = \textrm{keystroke frequency}\\
@@ -103,7 +103,7 @@ As comparison algorithms, we can use an \gls{euclideandistance} in $n$ dimension
 d(a, b) = \sqrt{(a_1 - b_1)^2 + \ldots + (a_n - b_n)^2}
 \end{equation}
 
-Since our feature vectors are not necessarily equal in size, we decided to use a \gls{dtw} distance measurement, as several other papers conclude, that \gls{dtw} distances give significantly better results in comparing time series data \cite{ding2008querying}. This allows our algorithm to be resilient to erroneously detected keystrokes. To emphasize the idea, the difference in the two comparisons is displayed in Figure~\ref{fig:euclideandtw}. in this figure, we are comparing two very similar time series, but the \gls{euclideandistance} is rather large, since the lower signal is shifted to the left and slightly stretched.
+Since our feature vectors are not necessarily equal in size, we decided to use a \gls{dtw} distance measurement, as several other papers conclude, that \gls{dtw} distances give significantly better results in comparing time series data \cite{ding2008querying}. This allows our algorithm to be resilient to erroneously detected keystrokes. To visualize the idea, the difference in the two comparisons is displayed in Figure~\ref{fig:euclideandtw}. in this figure, we are comparing two very similar time series, but the \gls{euclideandistance} is rather large, since the lower signal is shifted to the left and slightly stretched.
 
 \begin{figure}
     \centering
@@ -112,9 +112,9 @@ Since our feature vectors are not necessarily equal in size, we decided to use a
     \label{fig:euclideandtw}
 \end{figure}
 
-The standard \gls{dtw} algorithm uses dynamic programming, which fills a matrix of distance measurements and optimized the path through it. There are also other implementations like SparseDTW or FastDTW available that require significantly less computation time. We decided to stay with a simple approach, since we already condensed the feature vectors and the dynamic programming implementation is fast enough.
+The standard \gls{dtw} algorithm uses dynamic programming, which fills a matrix of distance measurements and optimizes the path through it. There are also other implementations like SparseDTW or FastDTW available that require less computation time for big inputs. We decided to stay with a simple approach, since we already condensed the feature vectors to relatively small sized and the dynamic programming implementation is fast enough for these small inputs.
 
-To classify the feature vectors, we implemented a \gls{knn} algorithm according to Dudani's paper on this behalf \cite{dudani1976distance}. With this algorithm, we can compare a new feature vector to all other vectors and record the distance to those vectors. We can then decide depending on the nearest neighbors, according to the distance measurement, to which category (\ie user) the new feature vector belongs. To do this, we look at the $k$ vectors with the smallest distance to the new vector and count, which category is present most often.
+To classify the feature vectors, we implemented a \gls{knn} algorithm according to Dudani's paper on this behalf \cite{dudani1976distance}. With this algorithm, we can compare a new feature vector to all other vectors and record the distance to those vectors. We can then decide depending on the nearest neighbors, according to this distance, to which category (\ie user) the new feature vector belongs. To do this, we look at the $k$ vectors with the smallest distance to the new vector and count, which category is present most often.
 
 To illustrate the \gls{knn} algorithm, a two dimensional example, as shown in Figure~\ref{fig:knnvisualization}, is better suited. On the left, we can see a plot of the already present data, represented as circles. These data-points are already categorized in three classes, shown as different colors of the circles. To categorize a new data-point \textbf{x}, we can now calculate the distance of \textbf{x} to all other points via a distance measurement. The \gls{euclideandistance} for two points is plotted as arrows in this example.
 
@@ -151,7 +151,7 @@ SQLite also stores the database in a single standardized file with a user-define
 The schema of the database is displayed in Figure~\ref{fig:dbschema}. With this schema, we are  storing the raw recorded data in so called ``datasets''. $N$ of the data points in a dataset form a whole measurement, which is linked to a single user. We also record the keystrokes in each of the measurements, when the user is using the on-screen keyboard. We then can correlate the ``sensortime'' we measured the individual acceleration in the dataset with the ``keystroketime'' to compare, if we correctly detected a keystroke. We also deduced the average keystroke and sensor-measurement frequency used in the parameters for the algorithms mentioned in the last sections.
 \begin{figure}
     \centering
-    \includegraphics[width=0.97\textwidth]{figures/databaseschema.png}
+    \includegraphics[width=0.93\textwidth]{figures/databaseschema.png}
     \caption{Schema of the SQLite database used by the prototypes}
     \label{fig:dbschema}
 \end{figure}
@@ -159,7 +159,7 @@ The schema of the database is displayed in Figure~\ref{fig:dbschema}. With this 
 \subsection{Background verification of patterns}
 Since the measurement data is persistently stored, we can also implement a background verification and identification of the users. These background identity checks would allow for the benefits of the additional stronger authentication, without bothering or interrupting the user.
 
-Currently, this is only a plan for future improvements, as of now, we only directly check the measured data. However this can easily be implemented with additional work.
+Currently, this is only a plan for future improvements. As of now, we only directly check the measured data. However this can easily be implemented with additional work.
 \section{App prototypes}
 The individual app prototypes and source code are available online via GitHub (\url{https://github.com/pfent/GesturesID}) or via the attached CD. The structure of the files is as follows: In the ``Android'' folder, there is an Android Studio project called ``GesturesID'', which contains the source code of the prototypes. In the same folder, there are also two \lstinline$.apk$ files, which can be installed on an Android, respectively an Android Wear device. This project can be built via the Android Studio \gls{ide} or via evecuting the Gradle wrapper script \lstinline$gradlew$.
 
@@ -175,7 +175,7 @@ Additionally, the portable library module also provides a \lstinline$Measurement
     \label{fig:phonescreenshot}
 \end{figure}
 
-The standard Android \gls{app} provides two \glspl{activity}. Both \glspl{activity} are launchable via Android's integrated \gls{app} launcher,\ie there are two different \gls{app} icons. The first \gls{activity} ``GesturesID'' is used to create training data and only records data. This activity can be seen in the screenshots on the left of Figure~\ref{fig:phonescreenshot}.
+The standard Android \gls{app} provides two \glspl{activity}. Both \glspl{activity} are launchable via Android's integrated \gls{app} launcher, \ie there are two different \gls{app} icons. The first \gls{activity} ``GesturesID'' is used to create training data and only records data. This activity can be seen in the screenshots on the left of Figure~\ref{fig:phonescreenshot}.
 
 In the current implementation, the user is first prompted to input a name, which is later used to identify the individual measurements. Afterwards, the user is prompted to enter a predefined sequence  to generate acceleration data for testing the pattern detection algorithm. The start and end of measurements is determined by a \lstinline$PatternFocusChangeListener$. This listener analyzes the ``focus'' of the user and generates events, when the user taps into the \lstinline$EditText$ component to input text. When the user taps the enter key or proceeds to the next input field, this ``focus'' is lost and the listener fires an end event and we stop recording data.
 
@@ -203,7 +203,8 @@ label={lst:authenticationprocess}]
 int classify (FeatureVectors[][] categories, FeatureVectors featureVectors)
     Classifier classifier = new kNNClassifier(categories, new dTWDistancer(3), 7);
     int category = classifier.classify(featureVectors);
-    // category now contains the index of the category in categories[][], where featureVectors belongs to
+    // category now contains the index of the category in categories[][], 
+    // where featureVectors belongs to
     return category
 }
 \end{lstlisting}

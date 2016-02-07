@@ -6,7 +6,7 @@ Timings and patterns in key strokes individual characteristics, that can serve a
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/KeystrokeTemporalFeatures.png}
-    \caption{The five temporal features of keystroke dynamics\cite{dholi2013typing}}
+    \caption{The five temporal features of keystroke dynamics \cite{dholi2013typing}}
     \label{fig:keystrokeFeatures}
 \end{figure}
 \subsection{Related work}
@@ -26,12 +26,12 @@ As a side note, typically the access to the on-screen keyboard is significantly 
 
 In 2012, Miluzzo \etal\cite{miluzzo2012tapprints} introduced \emph{TapPrints}, a mechanism to extract the location of screen taps solely from accelerometer and gyroscope data. With a machine learning approach, the system is able to detect taps with a bagged decision tree classifier to almost 100\%. Furthermore they were even able to guess individual letters in about 50\% of the cases.
 
-For the scope of this bachelor's thesis, a complex training with machine learning algorithms to detect taps is unnecessary. We can detect individual taps via a simple peak detection algorithm, as described by Palishkar \etal\cite{palshikar2009simple}. An example for peak recognition on the time series of sensor measurements is shown in Figure~\ref{fig:peakdetection}, were ten peaks, corresponding to a ten tap sequence are detected. Eventual inaccuracies in identification of individual taps is not necessarily considered negative to the overall pattern recognition scheme, because those peaks are also part of the user's individual behaviour.
+For the scope of this bachelor's thesis, a complex training with machine learning algorithms to detect taps is unnecessary. We can detect individual taps via a simple peak detection algorithm, as described by Palishkar \etal\cite{palshikar2009simple}. An example for peak recognition on the time series of sensor measurements is shown in Figure~\ref{fig:peakdetection}, were ten peaks, corresponding to a ten tap sequence are detected. Eventual inaccuracies in identification of individual taps are not necessarily considered negative to the overall pattern recognition scheme, because those peaks are also part of the user's individual behaviour.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/detectedPeaks.png}
-    \caption{Detected peaks in sensor measurements. Detected peaks are marked with red circles}
+    \caption{Detected peaks in sensor measurements (marked in red), as described in Section~\ref{subsection:featureextraction} [own work]}
     \label{fig:peakdetection}
 \end{figure}
 
@@ -69,7 +69,7 @@ In Android, the inertial coordinate system for the acceleration sensors is as di
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/TapDirection.png}
-    \caption{Model of touches on Android devices}
+    \caption{Model of touches on Android devices [own work]}
     \label{fig:touchdirection}
 \end{figure}
 The main force of taps on a touchscreen is opposite to the direction of the Z-Axis as displayed in Figure~\ref{fig:touchdirection}. Thus, we can safely neglect the X- and Y-axis for our use-case of identifying individual taps on the screen.

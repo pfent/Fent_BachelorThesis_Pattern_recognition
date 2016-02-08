@@ -42,7 +42,7 @@ One common trait of almost all smart mobile devices is the presence of accelerat
 \subsection{Smartphones}
 Smartphones are the most capable of the smart mobile devices discussed herein. Smartphones usually have numerous wireless communication possibilities and thus function are a personal data-hub, to which other personal devices connect and communicate over. Typical connections for Smartphones are: Cellular network (\eg \acrshort{gsm}, \acrshort{umts}), WiFi, Bluetooth, Near Field Communication etc. Smartphones are also packed with sensors, which can be utilized in \glspl{app} and typically include acceleration as well as gyroscopic sensors for movement detection.
 
-The three major operating systems on smartphones are Android, iOS and Windows. As shown in Figure~\ref{fig:smartphoneosmarketshare}, Android has the biggest market share of over 80\% and an \gls{app} targeting both Android and iOS can reach about 98\% of the smartphone market.
+The three major operating systems of smartphones are Android, iOS and Windows. As shown in Figure~\ref{fig:smartphoneosmarketshare}, Android has the biggest market share of over 80\% and an \gls{app} targeting both Android and iOS can reach about 98\% of the smartphone market.
 
 \begin{figure}
     \centering
@@ -52,51 +52,51 @@ The three major operating systems on smartphones are Android, iOS and Windows. A
 \end{figure}
 
 \subsection{Smartwatches}
-Smartwatches, as displayed in the middle of Figure~\ref{fig:smartdevices}, are a newer iteration of wearable smart mobile devices. Early designs for smartwatches came up in the 1980's and first prototypes were released in the 1990's. However, modern smartwatches feature network connectivity and are usually paired with smartphones via Bluetooth.
+Smartwatches, as displayed in the middle of Figure~\ref{fig:smartdevices}, are a newer iteration of wearable smart mobile devices. Early designs of smartwatches (essentially calculators) came up in the 1980's and first prototypes were released in the 1990's. However, modern smartwatches feature network connectivity and are usually paired with smartphones via Bluetooth.
 
 \begin{figure}
     \centering
     \includestandalone[width=0.8\textwidth]{figures/wristwearosmarketshare}
     \caption{Market share of wristware operating systems in 2015 \cite{idc2015wristmarketshare}}
-    \label{fig:my_label}
+    \label{fig:watchmarketshare}
 \end{figure}
 
-The currently biggest market share with over 50\% in smartwatches has Apple with the Apple Watch, running watchOS. Android Wear, an adapted version of the Android operating system for smartwatches, has the second highest market share. All in all, the smartwatch market is more diverse than the smartphone market, with several independently developed operating systems like Pebble OS or Samsung's Tizen. Nonetheless, Android Wear has the advantage of having consistent \Glspl{api} with Android. 
+Currently, the biggest market share, as shown in Figure~\ref{fig:watchmarketshare}, with over 50\% in smartwatches has Apple with the Apple Watch, running watchOS. Android Wear, an adapted version of the Android operating system for smartwatches, has the second highest market share. All in all, the smartwatch market is more diverse than the smartphone market, with several independently developed operating systems like Pebble OS or Samsung's Tizen. Nonetheless, Android Wear has the advantage of having consistent \Glspl{api} with Android. 
 
 With developing \glspl{app} for Android in combination with small adaptions to Android Wear, developers can target a huge percentage of smartphones and also can develop smartwatch apps with virtually no overhead.
 
 \subsection{Smart-rings}
-Smart-rings are the next step towards even smaller wearables. The basic concept of these rings is to provide the same basic ``smart'' functionality as a smartwatch, without the need to wear a watch. For example displaying notifications or providing authentication for payment processes can also be done solely on a smart ring.
+Smart-rings are the next step towards even smaller wearables. The concept of these rings is to provide the same basic ``smart'' functionality comparable to a smartwatch, without the need to actually wear a watch. For example displaying notifications or providing authentication for payment processes can also be done solely on a smart ring.
 
 However, there are no commercially available smart-rings yet, but just design concepts and prototypes. Specially developed smart-rings with acceleration sensors should be able to identify users based on their motion patterns. Future work might provide basic functionality on smart-rings, but definitely will need adaption to special purpose operating systems. 
 
 \section{Pattern recognition}
-Pattern recognition is a branch of machine learning, focused on determining the similarity of datasets. This is usually used to detect predefined patterns, \eg reading numbers or detecting gestures. However, this approach can also be used to generally group similar datasets and classify these without predefined categories. Grouping acceleration patterns is the main goal of this thesis, so pattern recognition algorithms are a main focus of this thesis.
+Pattern recognition is a branch of machine learning, that is focused on determining the similarity of datasets. This is usually used to detect predefined patterns, \eg reading numbers or detecting gestures. However, this approach can also be used to generally group similar datasets and classify these without predefined categories. Grouping acceleration patterns is the main goal of this thesis, so pattern recognition algorithms are a main focus of this thesis.
 
-The pattern recognition concepts and techniques are largely based on Bishop's book ``Pattern Recognition and Machine Learning''\cite{bishop2006pattern}. We are especially using the concept of a three staged data processing, as shown in Figure~\ref{fig:patternrecognitionsteps}. In this concept, we are first recording the raw data, then preprocess this data and extract a set of predefined features before using a standard classification algorithm.
+The pattern recognition concepts and techniques are largely based on Bishop's book ``Pattern Recognition and Machine Learning'' \cite{bishop2006pattern}. We are especially using the concept of a three staged data processing, as shown in Figure~\ref{fig:patternrecognitionsteps}. In this concept, we are first recording the raw data, then preprocess this data and extract a set of predefined features before using a standard classification algorithm.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/PatternRecognitionSteps.png}
-    \caption{The three staged pattern recognition approach, implemented in this thesis [own work]}
+    \caption{The three staged pattern recognition approach, implemented in this thesis}
     \label{fig:patternrecognitionsteps}
 \end{figure}
 
 \subsection{Preprocessing}
 In theory, pattern recognition algorithms can work on raw data. However, preprocessing steps can significantly improve the results of these algorithms. In practical applications, preprocessing is used to transform the data, so that the complexity of the problem is reduced. 
 
-A common example using this is technique is recognising digits in images. The digit recognition get significantly easier, when the image is cropped to a square around the digit and reduced to a black and white image. Generally speaking, preprocessing steps usually scale the problem to a fixed size and eliminate random noise. As a result, all data is transformed to have similar shape and generally gains predictability.
+A common example using this is technique is recognising digits in images. The digit recognition get significantly easier, when the image is cropped to a square around the digit and reduced to a black and white image. Generally speaking, preprocessing steps usually scale the problem to a fixed size and eliminate random noise. As a result, all data is transformed to have similar shape and in general gains predictability.
 
 The preprocessing steps usually operate on the raw input data and do not result in a loss of information.
 
 \subsection{Feature extraction}
 The next step, feature extraction, uses more aggressive means to extract the relevant data for our specific use-case. The feature extraction step usually reduces the dataset by several orders of magnitude, which makes subsequent categorization much faster and increases reliability. As a note, we are making a distinction between preprocessing and feature extraction, where Bishop \cite{bishop2006pattern} treats them as the same.
 
-Feature extraction is a core component of this thesis, since the performance of the pattern recognition algorithms scales with the amount of data needed to process. The main idea of this step is, that we do not need to compare the whole data from the acceleration sensors, but only the ``features'' we identify in the feature extraction step.
+Feature extraction is a core component of this thesis, since the performance of the pattern recognition algorithms scales with the amount of data needed to process. The main idea of this step is, that we do not need to compare the whole data from the acceleration sensors, but only ``features'' we identify in the feature extraction step.
 
-However, this feature extraction step is also a step, where real information can be lost. This means, that a precise and accurate feature extraction algorithm is essential. A too broad feature extraction algorithm can result in not recognizing legitimate authentication attempts, while a to narrow algorithm allows attackers to easily bypass this system. Also, for the data to be comparable, all data must undergo the same preprocessing and feature extracting steps. Even slight changes in the algorithms can spoil previous training steps.
+However, this feature extraction can also result in information loss. This means, that a precise and accurate feature extraction algorithm is essential. A too broad feature extraction algorithm can result in not recognizing legitimate authentication attempts, while a to narrow algorithm allows attackers to easily bypass this system. Also, for the data to be comparable, all data must undergo the same preprocessing and feature extracting steps. Even slight changes in the algorithms can spoil previous training steps.
 
 \subsection{Classification}
-In the end, a pattern recognition algorithm is used to classify the data into various categories. This is usually done by training the algorithm with known categories first. Then, based on this training, the algorithm can decide to which category new, unknown data belongs to. This form of training is called ``supervised'' training.
+In the end, a pattern recognition algorithm is used to classify the data into various categories. This is usually done by training the algorithm with known categories first. Then, based on this training, the algorithm can decide to which category new data with previously unknown category belongs to. This form of training is called ``supervised'' training.
 
-In general, the training can also be done unsupervised, \ie the initial categories are unknown and the algorithm finds best-fit categories itself. However for this thesis, we implemented a supervised algorithm, which can identify previously learned users. Automatically recognising new users might be possible as a future enhancement.
+In general, the training can also be done unsupervised, \ie the initial categories are unknown and the algorithm finds best-fit categories itself. However for this thesis, we implemented a supervised algorithm, which only identifies previously learned users. Automatically recognising new users might be possible as a future enhancement.

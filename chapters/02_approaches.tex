@@ -27,7 +27,7 @@ As a side note, typically the access to the on-screen keyboard is significantly 
 
 In 2012, Miluzzo \etal\cite{miluzzo2012tapprints} introduced \emph{TapPrints}, a mechanism to extract the location of screen taps solely from accelerometer and gyroscope data. With a machine learning approach, the system is able to detect taps with a bagged decision tree classifier to almost 100\%. Furthermore they were even able to guess individual letters in about 50\% of the cases.
 
-In this thesis, we are following the same basic idea, but for the scope of this bachelor's thesis, a training with machine learning algorithms to detect taps is unnecessarly complex. We can detect individual taps via a simple peak detection algorithm, as described by Palishkar \etal\cite{palshikar2009simple}. An example for peak recognition on the time series of sensor measurements is shown in Figure~\ref{fig:peakdetection}, were all ten peaks, corresponding to a ten tap sequence are detected using Palischkar's algorithm. Eventual inaccuracies in identification of individual taps are not necessarily considered negative to the overall pattern recognition scheme, because those peaks are also part of the user's individual behaviour.
+In this thesis, we are following the same basic idea, but for the scope of this bachelor's thesis, a training with machine learning algorithms to detect taps is unnecessarly complex. We can detect individual taps via a simple peak detection algorithm, as described by Palishkar \etal\cite{palshikar2009simple}. An example for peak recognition on the time series of sensor measurements is shown in Figure~\ref{fig:peakdetection}. In this Figure, ten peaks corresponding to a ten tap sequence are detected using Palischkar's algorithm. Eventual inaccuracies in identification of individual taps are not necessarily considered negative to the overall pattern recognition scheme, because those peaks are also part of the user's individual behaviour.
 
 \begin{figure}
     \centering
@@ -40,7 +40,7 @@ Palishkar's peak detection algorithm identifies peaks (also called spikes) in a 
 
 Palishkar's algorithm is a parametric algorithm, that can be adapted to the individual structure of the time series data. The algorithm takes two additional parameters to the time series: the window size $k$ around the peak to detect and a stringency $h$ that rejects ``low'' peaks based on Chebyshev's inequality. Chebyshev's inequality states that for a random variable $X$ with mean $\mu$ and standard deviation $\sigma$: $P[|X - \mu| \geq h\sigma] < \frac{1}{h^2}$. Based on this inequality, we can make a sophisticated guess, that a peak $x$ with $|x - \mu| < (h * \sigma)$ is ``small'' in a global context and thus not a significant enough peak.
 
-The window size $k$ restricts the amount of peaks detected within $k$ data points. To optimize the peak detection, we need to adapt $k$ to the typical time of a key press. Is $k$ too small, we might face the problem of detecting back-swings in the sensor data as additional peaks; is $k$ too big, subsequent keystrokes might not be recognized. We therefore analyzed typical usages to find a good $k$ for our implementation in Section~\ref{subsection:featureextraction}.
+The window size $k$ restricts the amount of peaks detected within $k$ data points. To optimize the peak detection, we need to adapt $k$ to the typical time of a key press. Is $k$ too small, we might face the problem of detecting back-swings in the sensor data as additional peaks; is $k$ too big, subsequent keystrokes might not be recognized. Therefore we analyzed typical usages to find a good $k$ for our implementation in Section~\ref{subsection:featureextraction}.
 
 \subsection{Features of keystrokes}
 Historically, the features of key strokes were only extracted from the events keyboards reported to the operating system. In example the X.Org Server, the de-facto standard input handling system in UNIX-like operating systems, handles a single key press via two separate events: A \lstinline$KeyPress$ event, whenever a key is pressed down and a \lstinline$KeyRelease$ event, when the key is lifted up again.
@@ -75,7 +75,7 @@ In Android, the inertial coordinate system for the acceleration sensors is orien
 \end{figure}
 The main force of taps on a touchscreen is opposite to the direction of the Z-Axis as displayed in Figure~\ref{fig:touchdirection}. Thus, we can safely neglect the X- and Y-axis for our use-case of identifying individual taps on the screen.
 
-The basic approach in keystroke classification on smartphones in our approach is to use Palishkar's peak detection algorithm, as described in Section~\ref{subsection:keystrokerecognition}. We can apply this algorithm to the Z-axis acceleration sensor records of the phone, which promises sufficiently good data for individual taps.
+Our basic approach in keystroke classification on smartphones is to use Palishkar's peak detection algorithm, as described in Section~\ref{subsection:keystrokerecognition}. We can apply this algorithm to the Z-axis acceleration sensor records of the phone, which promises sufficiently good data for individual taps.
 
 \subsection{Adaption to watches and keyboards}
 For recognition of key presses with smartwatches, we examined a scenario of a user wearing a smartwatch while typing on a physical keyboard. In this scenario, the X,Y-plane of the watch's inertial coordinate system is almost parallel to the keyboard (\cf Figure~\ref{fig:watchcoordinate}).
@@ -91,7 +91,7 @@ Wang \etal\cite{wang2015mole} discussed in their paper on MotionLeaks for MobiCo
 
 Wang \etal also improved their peak detection algorithm by chaining a peak detection tool with a bagged decision classifier. Since their goal was to guess individual typed keys instead of analysing the pattern as whole, the additional computational overhead might be worthwhile. However, this does not hold true for our approach of matching the whole  input pattern, thus we use a simple peak detection algorithm.
 
-Additionally to keystroke pattern recognition the overall movement of the watch while typing can be used as an additional authentication vector (\ie feature). Different users might move their hands differently for text input. However we are not aware of scientific studies measuring the effectiveness of this approach as of early 2016.
+Additionally to keystroke pattern recognition the overall movement of the watch while typing can be used as an authentication vector (\ie feature). Different users might move their hands differently for text input. However we are not aware of scientific studies measuring the effectiveness of this approach as of early 2016.
 
 \section{Gait recognition}
 Gait is defined as ``the way in which a person (\ldots) walks'' in the Cambridge Dictionary. Various scientific papers analyzed the specifics of human gait \cite{johansson1975visual, lee2002gait, johnstonsmartwatch} and concluded, that individual gait can be used as a biometrical recognition mechanism. The steps a user walks throughout the day can for example be used to generate user profiles and extract an identifying pattern. 

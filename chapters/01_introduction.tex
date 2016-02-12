@@ -40,7 +40,7 @@ Currently common examples for smart mobile devices are smartphones. With the rel
 One common trait of almost all smart mobile devices is the presence of acceleration and gyroscope sensors. These sensors are reasonable small and available as integrated circuits to fit in even the smallest devices. For this thesis, we are focusing on acceleration sensors to detect behavioural patterns.
 
 \subsection{Smartphones}
-Smartphones are the most capable of the smart mobile devices discussed herein. Smartphones usually have numerous wireless communication possibilities and thus function are a personal data-hub, to which other personal devices connect and communicate over. Typical connections for Smartphones are: Cellular network (\eg \acrshort{gsm}, \acrshort{umts}), WiFi, Bluetooth, Near Field Communication etc. Smartphones are also packed with sensors, which can be utilized in \glspl{app} and typically include acceleration as well as gyroscopic sensors for movement detection.
+Smartphones are the most capable of the smart mobile devices discussed herein. Smartphones usually have numerous wireless communication possibilities and thus function are a personal data-hub, to which other personal devices connect and communicate over. Typical connections for Smartphones are: Cellular network (\eg \acrshort{gsm}, \acrshort{umts}), WiFi, Bluetooth and Near Field Communication. Smartphones are also packed with sensors, which can be utilized in \glspl{app} and typically include acceleration as well as gyroscopic sensors for movement detection.
 
 The three major operating systems of smartphones are Android, iOS and Windows. As shown in Figure~\ref{fig:smartphoneosmarketshare}, Android has the biggest market share of over 80\% and an \gls{app} targeting both Android as well as iOS can reach about 98\% of the smartphone market.
 
@@ -71,7 +71,8 @@ Smart-rings are the next step towards even smaller wearables. The concept of the
 However, there are no commercially available smart-rings yet, but only design concepts and prototypes. Specially developed smart-rings with acceleration sensors should be able to identify users based on their motion patterns. Future work might provide basic functionality on smart-rings, but definitely will need adaption to special purpose operating systems. 
 
 \section{Pattern recognition}
-Pattern recognition is a branch of machine learning, that is focused on determining the similarity of datasets. This is usually used to detect predefined patterns, \eg reading numbers or detecting gestures. However, this approach can also be used to generally group similar datasets and classify these without predefined categories. Grouping acceleration patterns is the main goal of this thesis, so pattern recognition algorithms are a main focus.
+Pattern recognition is a branch of machine learning, that is focused on determining the similarity of data sets. This is usually used to detect predefined patterns, \eg reading numbers or detecting gestures. However, this approach can also be used to generally group similar data sets and classify these without predefined categories. Grouping acceleration patterns is the main goal of this thesis, so pattern recognition algorithms are a main focus.
+%KB: Data sets sind zwei wörter? http://www.dict.cc/?s=data+set
 
 The pattern recognition concepts and techniques are largely based on Bishop's book ``Pattern Recognition and Machine Learning'' \cite{bishop2006pattern}. We are especially using the concept of a three staged data processing, as shown in Figure~\ref{fig:patternrecognitionsteps}. In this concept, we are first record the raw data, then preprocess it and extract a set of predefined features before using a standard classification algorithm.
 
@@ -90,11 +91,12 @@ A common example using this technique is recognising digits in images. The digit
 The preprocessing steps usually operate on the raw input data and do not result in a loss of information.
 
 \subsection{Feature extraction}
-The next step, feature extraction, uses more aggressive means to extract the relevant data for our specific use-case. The feature extraction step usually reduces the dataset by several orders of magnitude, which makes subsequent categorization much faster and increases reliability. As a note, we are making a distinction between preprocessing and feature extraction, whereas Bishop \cite{bishop2006pattern} treats them as the same.
+The next step, feature extraction, uses more aggressive means to extract the relevant data for our specific use-case. The feature extraction step usually reduces the data set by several orders of magnitude, which makes subsequent categorization much faster and increases reliability. As a note, we are making a distinction between preprocessing and feature extraction, whereas Bishop \cite{bishop2006pattern} treats them as the same.
 
 Feature extraction is a core component of this thesis, since the performance of the pattern recognition algorithms scales with the amount of data needed to process. The main idea of this step is, that we do not need to compare the whole data from the acceleration sensors, but only ``features'' we identify in the feature extraction step.
 
 However, this feature extraction can also result in information loss. This means, that a precise and accurate feature extraction algorithm is essential. A too broad feature extraction algorithm can result in not recognizing legitimate authentication attempts, while a to narrow algorithm allows attackers to easily bypass this system. Also, for the data to be comparable, all data must undergo the same preprocessing and feature extracting steps. Even slight changes in the algorithms can spoil previous training steps.
+%KB: "while a to narrow algorithm" too mit zwei "o"
 
 \subsection{Classification}
 In the end, a pattern recognition algorithm is used to classify the data into various categories. This is usually done by training the algorithm with known categories first. Then, based on this training, the algorithm can decide to which category new data, with a previously unknown category, belongs to. This form of training is called ``supervised'' training.

@@ -8,7 +8,7 @@ The Android measurements have been conducted on a Nexus 10 Android tablet. In th
 
 To replicate these tests, the databases can be copied to the apps databases folder as \lstinline$SensorMeasurements.db$. Executing the \lstinline$EvaluationActivity$ will process the data and write any intermediate results to a \lstinline$CacheFeatures.db$ database, located in the cache folder of the app. The Android app also logs detected users to Android's logging system, which can be viewed with \lstinline$adb logcat$.
 
-The code test setup is to first run the preprocess and feature extraction steps on all measurements. With these features we can train our classification algorithm. For this we use all but one dataset for each user. With this trained classifier, we can measure our detection rate for the remaining dataset.
+The code test setup is to first run the preprocess and feature extraction steps on all measurements. With these features we can train our classification algorithm. For this we use all but one data set for each user. With this trained classifier, we can measure our detection rate for the remaining data set.
 
 \section{Runtime efficiency}\label{section:runtime}
 Since the current setup is mainly used for debugging, we are logging the results and itermediates to an additional database. This results in a relatively poor performance of \num{4.3} measurements per second on a OnePlus One smartphone. However this test is not limited by the processor, but by the database and the storage write speeds. In an optimized environment, where we turn of writing to the database and thus keep all data in memory only, we get much better results. Our tests showed, that with optimizations, we can reach $\sim$\num{21} measurements per second.
